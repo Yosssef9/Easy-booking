@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Easy Booking</title>
+    <link rel="stylesheet" href="./css/login.css" />
+  </head>
+  <body>
+    <div class="title">
+      <span style="color: rgb(47, 47, 187)" class="Easy">Easy</span>
+      <span style="color: rgb(255, 255, 255)" class="Booking">Booking</span>
+    </div>
+    <div class="login-container">
+      <div class="form-wrapper">
+        <h2>Welcome Back!</h2>
+        <p>Log in to your account to continue</p>
+        <!-- Add id 'login-form' to the form -->
+        <form id="login-form">
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <div class="form-options">
+            <label> <input type="checkbox" /> Remember me </label>
+            <a href="#" class="forgot-password">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-submit" id="loginButton">
+            Login
+          </button>
+          <p class="register-text">
+            Don't have an account? <a href="#">Sign up now</a>
+          </p>
+        </form>
+        <!-- Add a div to show login status or error message -->
+        <p id="login-text"></p>
+      </div>
+    </div>
+
+    <script src="js/login.js"></script>
+  </body>
+</html>

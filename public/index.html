@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Easy Booking</title>
+    <link rel="stylesheet" href="./css/index.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-tPYh59bqMSQLC0pFoMQ36pN4nDX1sdMB8oHlWyHJInjupz66jCHiAYzwkj7Xt8kj4MOKwuzsoYZOkHIlOxZ51Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-container">
+          <h1><span style="color: #4040c3">Easy</span> Booking</h1>
+          <nav>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Browse Listings</a></li>
+              <li><a href="/Add-Accommodations">Add Accommodations</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <h2>Find Your Perfect Stay</h2>
+        <p>Book hotels or houses easily and quickly</p>
+        <form action="#" method="POST" class="search-form">
+          <input type="text" placeholder="Search for a city" name="city" />
+          <span class="date-label">From : </span>
+          <input type="date" name="checkin" placeholder="Check-in Date" />
+          <span class="date-label"> To : </span>
+          <input type="date" name="checkout" placeholder="Check-out Date" />
+          <select name="property-type">
+            <option value="" disabled selected>Select Type</option>
+            <option value="hotel">Hotel</option>
+            <option value="house">House</option>
+          </select>
+          <button type="submit">Search</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="results" class="results">
+      <div class="container">
+        <h2 class="available-listings">Available Listings</h2>
+        <div id="cards-container">
+          <!-- <div class="listing-card">
+            <img
+              src="./hotel-del-coronado-views-suite-K1TOS1-K1TOJ1-1600x900-1.webp"
+              alt="Hotel Image"
+            />
+            <div class="listing-info">
+              <h3>Hotel</h3>
+              <p>From $200 per night</p>
+              <button>Book Now</button>
+            </div>
+          </div>
+          <div class="listing-card">
+            <img src="./images.jpg" alt="House Image" />
+            <div class="listing-info">
+              <h3>House</h3>
+              <p>From $120 per night</p>
+              <button>Book Now</button>
+            </div>
+          </div>
+          <div class="listing-card">
+            <img src="./images (1).jpg" alt="Hotel Image" />
+            <div class="listing-info">
+              <h3>Hotel</h3>
+              <p>From $200 per night</p>
+              <button>Book Now</button>
+            </div>
+          </div>
+          <div class="listing-card">
+            <img src="./download (2).jpg" alt="House Image" />
+            <div class="listing-info">
+              <h3>House</h3>
+              <p>From $120 per night</p>
+              <button>Book Now</button>
+            </div>
+          </div>
+          <div class="listing-card">
+            <img src="./download (1).jpg" alt="Hotel Image" />
+            <div class="listing-info">
+              <h3>Hotel</h3>
+              <p>From $200 per night</p>
+              <button>Book Now</button>
+            </div>
+          </div>
+          <div class="listing-card">
+            <img src="./download.jpg" alt="House Image" />
+            <div class="listing-info">
+              <h3>House</h3>
+              <p>From $120 per night</p>
+              <button>Book Now</button>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="./js/index.js"></script>
+  </body>
+</html>

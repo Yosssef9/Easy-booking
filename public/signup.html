@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Easy Booking - Register</title>
+    <link rel="stylesheet" href="./css/signup.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <h2>Registration</h2>
+      <!-- Add the id 'signup-form' to the form -->
+      <form id="signup-form">
+        <div class="input-box">
+          <!-- Add id 'username' to the input for the username -->
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter your name"
+            required
+          />
+        </div>
+        <div class="input-box">
+          <!-- Add id 'email' to the input for the email -->
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="input-box">
+          <!-- Add id 'password' to the input for the password -->
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <div class="input-box">
+          <!-- Add id 'yearOfBirth' to the select for the year of birth -->
+          <select name="" id="yearOfBirth" required>
+            <option value="" disabled selected>
+              Select your year of birth
+            </option>
+          </select>
+        </div>
+        <div class="input-box">
+          <select name="" id="favouriteCity" required>
+            <option value="" disabled selected>
+              Select your favourite City
+            </option>
+          </select>
+        </div>
+        <div class="input-box">
+          <!-- Add id 'phoneNumber' to the input for the phone number -->
+          <input
+            type="tel"
+            id="phoneNumber"
+            placeholder="Enter your phone number"
+            required
+          />
+        </div>
+        <div class="policy">
+          <input type="checkbox" id="terms" required />
+          <h3>I accept all terms & condition</h3>
+        </div>
+        <div class="input-box button">
+          <input type="submit" value="Register Now" />
+        </div>
+        <div class="text">
+          <h3>Already have an account? <a href="#">Login now</a></h3>
+        </div>
+      </form>
+    </div>
+
+    <div class="title">
+      <span style="color: rgb(47 47 187)" class="Easy">Easy</span>
+      <span style="color: rgb(255, 255, 255)" class="Booking">Booking</span>
+    </div>
+
+    <script>
+      // Populate the year of birth dropdown
+      const selectElement = document.getElementById("yearOfBirth");
+      for (let year = 1900; year <= 2024; year++) {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        selectElement.appendChild(option);
+      }
+    </script>
+    <script src="./js/signup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Report - Easy Booking</title>
+    <link rel="stylesheet" href="./css/addReport.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-tPYh59bqMSQLC0pFoMQ36pN4nDX1sdMB8oHlWyHJInjupz66jCHiAYzwkj7Xt8kj4MOKwuzsoYZOkHIlOxZ51Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-container">
+          <h1><span style="color: #4040c3">Easy</span> Booking</h1>
+          <nav>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Browse Listings</a></li>
+              <li><a href="#">Add Accommodations</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <h2>Create Your Report</h2>
+        <p>Provide the necessary details to create your report.</p>
+        <form action="#" method="POST" class="report-form">
+          <input type="text" placeholder="Report Title" name="title" required />
+          <textarea
+            placeholder="Describe the report"
+            name="description"
+            rows="5"
+            required
+          ></textarea>
+          <label for="category">Category:</label>
+          <select name="category" required>
+            <option value="" disabled selected>Select Category</option>
+            <option value="feedback">Feedback</option>
+            <option value="issue">Issue</option>
+            <option value="suggestion">Suggestion</option>
+          </select>
+          <button type="submit">Submit Report</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

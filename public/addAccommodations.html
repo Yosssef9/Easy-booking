@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Accommodations</title>
+    <link rel="stylesheet" href="./css/addAccommodations.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-container">
+          <h1><span style="color: #4040c3">Easy</span> Booking</h1>
+          <nav>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="browse-listings.html">Browse Listings</a></li>
+              <li><a href="add-accommodation.html">Add Accommodations</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <section class="add-accommodation">
+      <div class="container">
+        <h2 class="Add-New-Accommodation">Add New Accommodation</h2>
+        <form
+          action="#"
+          method="POST"
+          enctype="multipart/form-data"
+          class="accommodation-form"
+        >
+          <label for="property-type">Property Type:</label>
+          <select
+            id="property-type"
+            name="property-type"
+            onchange="showAdditionalFields()"
+          >
+            <option value="" disabled selected>Select Type</option>
+            <option value="hotel">Hotel</option>
+            <option value="house">House</option>
+          </select>
+
+          <!-- Hotel Fields -->
+          <div
+            id="hotel-fields"
+            class="accommodation-fields"
+            style="display: none"
+          >
+            <label for="hotel-name">Hotel Name:</label>
+            <input
+              type="text"
+              id="hotel-name"
+              name="hotel-name"
+              placeholder="Hotel Name"
+            />
+
+            <label for="hotel-price">Price Per Night:</label>
+            <input
+              type="number"
+              id="hotel-price"
+              name="hotel-price"
+              placeholder="Price"
+            />
+
+            <label for="hotel-max-guests">Max Guests:</label>
+            <input
+              type="number"
+              id="hotel-max-guests"
+              name="hotel-max-guests"
+              placeholder="Max Guests"
+            />
+
+            <!-- Hotel Location Details -->
+            <label for="hotel-location">Location</label>
+            <div class="location-details">
+              <label for="hotel-city">City:</label>
+              <input
+                type="text"
+                id="hotel-city"
+                name="hotel-city"
+                placeholder="City"
+              />
+
+              <label for="hotel-zone">Zone:</label>
+              <input
+                type="text"
+                id="hotel-zone"
+                name="hotel-zone"
+                placeholder="Zone"
+              />
+
+              <label for="hotel-street">Street:</label>
+              <input
+                type="text"
+                id="hotel-street"
+                name="hotel-street"
+                placeholder="Street"
+              />
+            </div>
+
+            <label for="hotel-amenities">Amenities:</label>
+            <select id="hotel-amenities" name="hotel-amenities[]" multiple>
+              <option value="wifi">Wi-Fi</option>
+              <option value="gym">Gym</option>
+              <option value="pool">Pool</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="parking">Parking</option>
+            </select>
+
+            <!-- Hotel Image Upload -->
+            <label for="hotel-image">Upload Hotel Image:</label>
+            <input
+              type="file"
+              id="hotel-image"
+              name="hotel-image"
+              accept="image/*"
+            />
+          </div>
+
+          <!-- House Fields -->
+          <div
+            id="house-fields"
+            class="accommodation-fields"
+            style="display: none"
+          >
+            <label for="house-name">House Name:</label>
+            <input
+              type="text"
+              id="house-name"
+              name="house-name"
+              placeholder="House Name"
+            />
+
+            <label for="house-price">Price Per Night:</label>
+            <input
+              type="number"
+              id="house-price"
+              name="house-price"
+              placeholder="Price"
+            />
+
+            <label for="house-max-guests">Max Guests:</label>
+            <input
+              type="number"
+              id="house-max-guests"
+              name="house-max-guests"
+              placeholder="Max Guests"
+            />
+
+            <!-- House Location Details -->
+            <label for="house-location">Location</label>
+            <div class="location-details">
+              <label for="house-city">City:</label>
+
+              <select id="house-city" name="house-city">
+                <option selected disabled value="">Select a City</option>
+              </select>
+
+              <label for="house-zone">Zone:</label>
+              <input
+                type="text"
+                id="house-zone"
+                name="house-zone"
+                placeholder="Zone"
+              />
+
+              <label for="house-street">Street:</label>
+              <input
+                type="text"
+                id="house-street"
+                name="house-street"
+                placeholder="Street"
+              />
+
+              <label for="house-number">House Number:</label>
+              <input
+                type="text"
+                id="house-number"
+                name="house-number"
+                placeholder="House Number"
+              />
+            </div>
+
+            <label for="house-description">Description:</label>
+            <textarea
+              id="house-description"
+              name="house-description"
+              placeholder="Describe the house"
+            ></textarea>
+
+            <!-- House Amenities Select -->
+            <label for="house-amenities">Amenities:</label>
+            <select id="house-amenities" name="house-amenities[]" multiple>
+              <option value="wifi">Wi-Fi</option>
+              <option value="gym">Gym</option>
+              <option value="pool">Pool</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="parking">Parking</option>
+              <option value="parking">Air Conditioning</option>
+            </select>
+
+            <!-- House Image Upload -->
+            <label for="house-thumbnail">Upload House thumbnail:</label>
+            <input
+              type="file"
+              id="house-thumbnail"
+              name="house-thumbnail"
+              accept="image/*"
+              required
+            />
+            <label for="house-image">Upload House Image:</label>
+            <input
+              type="file"
+              multiple
+              id="house-image"
+              name="house-image"
+              accept="image/*"
+            />
+          </div>
+
+          <button type="submit">Add Accommodation</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="./js/addAccommodations.js"></script>
+  </body>
+</html>
