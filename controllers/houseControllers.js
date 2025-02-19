@@ -1,10 +1,11 @@
-const House = require("../models/houseModel");
+const { Property, House } = require("../models/property");
 const { validationResult } = require("express-validator");
 
 exports.addHouse = async (req, res) => {
   try {
     const userId = req.user.id;
     console.log(" req.user : ", req.user);
+
     // Validate request data
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -19,26 +20,30 @@ exports.addHouse = async (req, res) => {
     }
 
     // Get uploaded image URLs (Cloudinary stores them in file.path)
-    const imageUrls = [];
-
-    if (req.files["house-image"]) {
-      imageUrls.push(...req.files["house-image"].map((file) => file.path));
-    }
+    const imageUrls = req.files["house-image"]
+      ? req.files["house-image"].map((file) => file.path)
+      : [];
 
     const thumbnail = req.files["house-thumbnail"]
       ? req.files["house-thumbnail"][0].path
-      : null; // Save the thumbnail image URL
+      : null;
 
     // Ensure required fields are present
-    if (
-      !req.body.name ||
-      !req.body.city ||
-      !req.body.zone ||
-      !req.body.street ||
-      !req.body.pricePerNight ||
-      !req.body.maxGuests
-    ) {
-      return res.status(400).json({ message: "Missing required fields" });
+    const requiredFields = [
+      "name",
+      "city",
+      "zone",
+      "street",
+      "pricePerNight",
+      "maxGuests",
+      "houseNumber",
+    ];
+    for (const field of requiredFields) {
+      if (!req.body[field]) {
+        return res
+          .status(400)
+          .json({ message: `Missing required field: ${field}` });
+      }
     }
 
     // Create new house entry
@@ -57,6 +62,8 @@ exports.addHouse = async (req, res) => {
       thumbnail: thumbnail,
       images: imageUrls, // Cloudinary image URLs
       owner: userId,
+      propertyType: "House", // Explicitly set discriminator type
+      reservations: [], // Initialize reservations array
     });
 
     await newHouse.save();
@@ -68,21 +75,5 @@ exports.addHouse = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error adding house", error });
-  }
-};
-
-exports.getHouses = async (req, res) => {
-  try {
-    let houses = await House.find();
-    if (houses.length == 0) {
-      return res.status(400).json({ message: "data not found" });
-    }
-    res.status(201).json({
-      message: "data get successfully!",
-      data: houses,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error get houses", error });
   }
 };

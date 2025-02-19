@@ -1,29 +1,32 @@
 let cardsContainer = document.getElementById("cards-container");
 async function fetchHouses() {
   try {
-    const response = await fetch("http://localhost:5000/api/house/get-houses", {
-      method: "GET",
-    });
+    const response = await fetch(
+      "http://localhost:5000/api/property/getAllProperties",
+      {
+        method: "GET",
+      }
+    );
 
     if (response.ok) {
       const result = await response.json();
-      console.log("Houses data:", result);
-      result.data.forEach((house) => {
-        let houseCard = document.createElement("div");
-        houseCard.classList.add("listing-card");
-        console.log("house :", house);
-        houseCard.innerHTML = `
-        <img
-              src="${house.thumbnail}"
-              alt="Hotel Image"
-            />
-            <div class="listing-info">
-              <h3>Hotel</h3>
-              <p>From $${house.pricePerNight} per night</p>
-              <button>Book Now</button>
-            </div>
-      `;
-        cardsContainer.appendChild(houseCard);
+      console.log("property data:", result);
+      result.data.forEach((property) => {
+        let propertyCard = document.createElement("div");
+        propertyCard.classList.add("listing-card");
+        console.log("property :", property);
+        propertyCard.innerHTML = `
+        <img src="${property.thumbnail}" alt="Hotel Image" />
+        <div class="listing-info">
+            <h3>${property.propertyType}</h3>
+            <p>From $${property.pricePerNight} per night</p>
+            <a href="showDetails.html?id=${property._id}">
+                <button>Book Now</button>
+            </a>
+        </div>
+    `;
+
+        cardsContainer.appendChild(propertyCard);
       });
     } else {
       const errorData = await response.json();

@@ -10,6 +10,9 @@ body {
   background-color: #f4f4f4;
 }
 
+a {
+  text-decoration: none;
+}
 .container {
   width: 90%;
   max-width: 1200px;

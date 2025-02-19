@@ -30,6 +30,7 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
     />
+    <script src="https://js.stripe.com/v3/"></script>
   </head>
   <body>
     <header>
@@ -51,43 +52,46 @@
     <div class="hotel-card">
       <section class="hotel-details">
         <div class="container">
-          <h2>Hotel: Hotel Del Coronado</h2>
-          <div class="hotel-card-content">
-            <img
-              src="./hotel-del-coronado-views-suite-K1TOS1-K1TOJ1-1600x900-1.webp"
-              alt="Hotel Image"
-            />
-            <div class="hotel-info">
-              <h3>Luxury Oceanview Suite</h3>
-              <p>
-                Located by the beach, this luxurious suite offers stunning ocean
-                views and world-class amenities.
-              </p>
-              <ul>
-                <li>Price: $200 per night</li>
-                <li>
-                  Amenities: Free Wi-Fi, Ocean View, Pool, Restaurant, Spa
-                </li>
-                <li>Rating: 4.5/5</li>
-                <li>Rooms Available: 5</li>
-              </ul>
-              <button>Book Now</button>
+          <div id="property_details">
+            <!-- <h2 id="name">Hotel: Hotel Del Coronado</h2>
+            <div class="hotel-card-content">
+              <img src="./download (1).jpg" alt="" />
+              <div class="hotel-info">
+                <h3>Luxury Oceanview Suite</h3>
+                <p>
+                  Located by the beach, this luxurious suite offers stunning
+                  ocean views and world-class amenities.
+                </p>
+                <ul>
+                  <li id="price">Price: $200 per night</li>
+                  <li id="Amenities">
+                    Amenities: Free Wi-Fi, Ocean View, Pool, Restaurant, Spa
+                  </li>
+                  <li id="rating">Rating: 4.5/5</li>
+                  <li id="rooms-available">Rooms Available: 5</li>
+                </ul>
+                <button>Book Now</button>
+              </div>
             </div>
+            Add a div to hold the card form that will be shown when the user clicks "Book Now" -->
+
+            <!-- <h3 id="property_description">Hotel Description</h3>
+            <p id="description">
+              Hotel Del Coronado is an iconic beachfront hotel offering
+              breathtaking ocean views, an elegant spa, luxurious rooms, and
+              impeccable service. Perfect for both relaxation and business
+              trips.
+            </p>
+
+            <h3>Location</h3>
+            <p>
+              <span id="house-number" class="house-number"
+                >House Number: 25A</span
+              >, <span id="street" class="street">Street: Ocean Blvd</span>,
+              <span id="zone" class="zone">Zone: Beachfront</span>,
+              <span id="city" class="city">City: San Diego</span>
+            </p> -->
           </div>
-
-          <h3>Hotel Description</h3>
-          <p>
-            Hotel Del Coronado is an iconic beachfront hotel offering
-            breathtaking ocean views, an elegant spa, luxurious rooms, and
-            impeccable service. Perfect for both relaxation and business trips.
-          </p>
-
-          <h3>Location</h3>
-          <p>
-            Situated on Coronado Island, the hotel is just steps away from the
-            beach, shopping, and restaurants, making it the ideal getaway
-            destination.
-          </p>
 
           <h3>Reviews</h3>
           <div class="reviews">
@@ -117,10 +121,40 @@
       </section>
     </div>
 
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="payment-modal">
+      <div class="payment-modal-content">
+        <span id="close-btn" class="close">&times;</span>
+        <div id="payment-form" style="display: block">
+          <div id="card-element"></div>
+          <button id="payBtn">Pay Now</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay" class="hidden overlay"></div>
+    <div id="modal" class="hidden modal">
+      <h3>Select Your Dates</h3>
+      <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" />
+      </div>
+      <div>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" />
+      </div>
+
+      <p id="error-message" class="error"></p>
+
+      <button id="proceedToPay" class="btn">Proceed to Pay</button>
+      <button id="closeModal" class="btn">Cancel</button>
+    </div>
+
     <footer>
       <div class="container">
         <p>&copy; 2024 Easy Booking. All rights reserved.</p>
       </div>
     </footer>
+    <script src="./js/showDetails.js"></script>
   </body>
 </html>

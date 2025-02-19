@@ -1,5 +1,12 @@
 const express = require("express");
-const { signup, login, deleteUser } = require("../controllers/authController");
+const {
+  signup,
+  login,
+  createPaymentIntent,
+  checkReservationAvailability,
+  makeReservation,
+} = require("../controllers/authController");
+const protect = require("../middlewares/protect");
 
 const router = express.Router();
 
@@ -8,5 +15,15 @@ router.post("/signup", signup);
 
 // Route for user login
 router.post("/login", login);
+
+router.post("/create-payment-intent", protect, createPaymentIntent);
+
+router.get(
+  "/check-reservation-availability/:propertyId",
+  protect,
+  checkReservationAvailability
+);
+
+router.post("/makeReservation", protect, makeReservation);
 
 module.exports = router;

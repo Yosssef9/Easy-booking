@@ -4,12 +4,12 @@ const connectDB = require("./config/db");
 const protect = require("./middlewares/protect");
 const authRoutes = require("./routes/authRoutes");
 const houseRoutes = require("./routes/houseRoutes");
-const reportRoutes = require("./routes/reportRoutes");
+const propertyRoutes = require("./routes/propertyRoutes");
+// const reportRoutes = require("./routes/reportRoutes");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const PORT = process.env.PORT || 5000;
 require("dotenv").config();
-
 const app = express();
 
 // Middleware
@@ -43,7 +43,8 @@ app.post("/test", (req, res) => {
 // Authentication Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/house", houseRoutes);
-app.use("/api/report", reportRoutes);
+app.use("/api/property", propertyRoutes);
+// app.use("/api/report", reportRoutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, "public")));
