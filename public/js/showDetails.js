@@ -190,6 +190,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
+    let today = new Date();
+    if (start < today || end < today) {
+      errorMessage.textContent =
+        "The date you selected has already passed. Please choose a future date.";
+      setTimeout(() => {
+        errorMessage.textContent = "";
+      }, 3000);
+      return false;
+    }
     return true; // Validation successful
   }
 
@@ -258,3 +267,25 @@ async function makeReservation(reservationData) {
     console.log("Error:", error);
   }
 }
+
+
+
+
+document.getElementById("logout").addEventListener("click", function (e) {
+  e.preventDefault();  // Prevent default link behavior
+
+  fetch("http://localhost:5000/api/auth/logout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",  // Ensure cookies are included
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message === "Logout successful") {
+      window.location.href = "/login";  // Redirect after logout
+    }
+  })
+  .catch(error => console.error("Error logging out:", error));
+});

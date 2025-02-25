@@ -1,4 +1,5 @@
 const { Property } = require("../models/property");
+const  reservations  = require("../models/reservations");
 const mongoose = require("mongoose");
 
 exports.getAllProperties = async (req, res) => {
@@ -50,3 +51,54 @@ exports.getProperty = async (req, res) => {
     res.status(500).json({ error: error });
   }
 };
+
+
+exports.getAllReservations = async (req, res) => {
+  console.log("get request to getAllReservations");
+
+  let user = req.user; // Assuming you have a user object in the request (e.g., from authentication)
+
+  try {
+    // Fetch reservations where the tenant (user) matches the logged-in user's id
+    const userReservations = await reservations.find({ tenant: user.id })
+    .populate("propertyId")  // Populate the whole Property document
+    .populate("tenant", "name email")
+
+    if (userReservations.length === 0) {
+      return res.status(404).json({ message: "No reservations found for this user" });
+    }
+
+    res.status(200).json({
+      message: "Reservations retrieved successfully",
+      data: userReservations,
+    });
+  } catch (error) {
+    console.error("Error fetching reservations:", error.message);
+    res.status(500).json({ message: "Error fetching reservations", error });
+  }
+};
+
+
+
+exports.getAllUserProperties = async (req, res) => {
+  console.log("get request to getAllUserProperties");
+
+  let user = req.user; // Assuming you have a user object in the request (e.g., from authentication)
+
+  try {
+    const userProperties = await Property.find({ owner: user.id })
+   
+
+    if (userProperties.length === 0) {
+      return res.status(404).json({ message: "No reservations found for this user" });
+    }
+
+    res.status(200).json({
+      message: "Properties retrieved successfully",
+      data: userProperties,
+    });
+  } catch (error) {
+    console.error("Error fetching Properties:", error.message);
+    res.status(500).json({ message: "Error fetching Properties", error });
+  }
+}

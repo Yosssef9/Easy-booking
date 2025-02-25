@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const reservationSchema = new mongoose.Schema({
   propertyId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Property",
     required: true,
   },
   propertyType: {

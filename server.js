@@ -6,12 +6,17 @@ const authRoutes = require("./routes/authRoutes");
 const houseRoutes = require("./routes/houseRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 // const reportRoutes = require("./routes/reportRoutes");
+const cron = require("node-cron");
+const mongoose = require("mongoose");
+const Reservation = require("./models/reservations"); // Adjust the path as needed
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const PORT = process.env.PORT || 5000;
 require("dotenv").config();
 const app = express();
-
+const {
+  updateExpiredReservations,
+} = require("./utils/updateExpireResravtiosn");
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
 app.use(cookieParser()); // Cookie parsing middleware
@@ -34,6 +39,20 @@ app.use((req, res, next) => {
   next();
 });
 
+cron.schedule("0 0 * * *", async () => {
+  try {
+    const today = new Date();
+    const result = await Reservation.updateMany(
+      { endDate: { $lt: today }, isTheReservationOver: false },
+      { $set: { isTheReservationOver: true } }
+    );
+    console.log(`Updated ${result.modifiedCount} expired reservations.`);
+  } catch (error) {
+    console.error("Error updating reservations:", error);
+  }
+});
+
+updateExpiredReservations();
 // Test route
 app.post("/test", (req, res) => {
   console.log(req.body);
@@ -65,6 +84,12 @@ app.get("/admin-dashboard", protect, (req, res) => {
 });
 app.get("/Add-Accommodations", protect, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "addAccommodations.html"));
+});
+app.get("/My-Reservations", protect, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "MyReservations.html"));
+});
+app.get("/My-Properties", protect, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "MyProperties.html"));
 });
 
 // Start server

@@ -213,3 +213,15 @@ exports.makeReservation = async (req, res) => {
       .json({ success: false, message: "Server error. Please try again." });
   }
 };
+
+
+
+exports.logout = async (req, res) => {
+  try {
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "Strict" });
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Error logging out", error: error.message });
+  }
+};

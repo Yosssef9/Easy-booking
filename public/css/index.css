@@ -1,3 +1,4 @@
+/* General Reset */
 * {
   margin: 0;
   padding: 0;
@@ -13,6 +14,7 @@ body {
 a {
   text-decoration: none;
 }
+
 .container {
   width: 90%;
   max-width: 1200px;
@@ -38,14 +40,23 @@ header h1 {
 
 nav ul {
   list-style: none;
-  float: right;
+  display: flex;
+  margin-left: 0;
 }
 
 nav ul li {
-  display: inline;
+  position: relative;
   margin-left: 20px;
-  height: 60px; /* Adjust the height as per your design */
-  line-height: 60px; /* Vertically center the text */
+}
+
+nav ul li a {
+  padding: 0 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 1.2em;
+  height: 100%;
+  line-height: 60px;
+  display: inline-block;
 }
 
 nav ul li a:hover {
@@ -53,14 +64,54 @@ nav ul li a:hover {
   transition: background-color 0.3s ease;
 }
 
-nav ul li a {
-  padding: 0 20px; /* Horizontal padding for spacing */
+/* Dropdown Button */
+nav ul li.dropdown .dropbtn {
+  background-color: #2c3e50; /* Default button color */
   color: white;
-  text-decoration: none;
+  padding: 15px 20px;
   font-size: 1.2em;
-  height: 100%; /* Fill the height of the li */
-  line-height: 60px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
   display: inline-block;
+}
+
+nav ul li.dropdown:hover .dropbtn {
+  background-color: #4a5f74; /* Hover color */
+}
+
+/* Dropdown content with Gray Background */
+nav ul li.dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #95a5a6; /* Gray background */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+/* Show dropdown on hover */
+nav ul li.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Dropdown items */
+nav ul li.dropdown .dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 17px;
+  border-bottom: 1px solid #7f8c8d; /* Line under each item */
+}
+
+/* Hover effect on dropdown items */
+nav ul li.dropdown .dropdown-content a:hover {
+  background-color: #cad2d3; /* Darker gray on hover */
 }
 
 .hero {
@@ -202,75 +253,4 @@ footer {
   position: relative;
   bottom: 0;
   width: 100%;
-}
-
-/* Container for the custom dropdown */
-.custom-dropdown {
-  position: relative;
-  width: 250px; /* Adjust width */
-  margin: 20px auto;
-}
-
-/* Button that triggers the dropdown */
-.dropdown-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover effect for the dropdown button */
-.dropdown-btn:hover {
-  background-color: #2980b9;
-}
-
-/* The hidden dropdown menu */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  width: 100%;
-  top: 100%;
-  left: 0;
-  background-color: #ecf0f1;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1;
-  max-height: 0; /* Start with no height, only show when clicked */
-  overflow: hidden;
-  transition: max-height 0.3s ease; /* Smooth transition */
-}
-
-/* Style for each option in the dropdown */
-.dropdown-option {
-  display: block;
-  padding: 12px;
-  font-size: 1em;
-  color: #34495e;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover effect for the options */
-.dropdown-option:hover {
-  background-color: #3498db;
-  color: white;
-}
-
-/* Show the dropdown when clicked */
-.custom-dropdown.open .dropdown-content {
-  display: block;
-  max-height: 200px; /* Adjust as needed for the number of items */
-}
-
-/* Style for the active state of the selected option */
-.custom-dropdown.open .dropdown-option.active {
-  background-color: #2980b9;
-  color: white;
 }

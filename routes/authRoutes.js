@@ -5,6 +5,7 @@ const {
   createPaymentIntent,
   checkReservationAvailability,
   makeReservation,
+  logout
 } = require("../controllers/authController");
 const protect = require("../middlewares/protect");
 
@@ -15,6 +16,9 @@ router.post("/signup", signup);
 
 // Route for user login
 router.post("/login", login);
+
+
+router.post("/logout", logout);
 
 router.post("/create-payment-intent", protect, createPaymentIntent);
 

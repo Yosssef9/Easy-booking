@@ -1,3 +1,4 @@
+/* General Reset */
 * {
   margin: 0;
   padding: 0;
@@ -8,6 +9,10 @@ body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
   background-color: #f4f4f4;
+}
+
+a {
+  text-decoration: none;
 }
 
 .container {
@@ -35,19 +40,13 @@ header h1 {
 
 nav ul {
   list-style: none;
-  float: right;
+  display: flex;
+  margin-left: 0;
 }
 
 nav ul li {
-  display: inline;
+  position: relative;
   margin-left: 20px;
-  height: 60px;
-  line-height: 60px;
-}
-
-nav ul li a:hover {
-  background-color: #4a5f74;
-  transition: background-color 0.3s ease;
 }
 
 nav ul li a {
@@ -58,6 +57,61 @@ nav ul li a {
   height: 100%;
   line-height: 60px;
   display: inline-block;
+}
+
+nav ul li a:hover {
+  background-color: #4a5f74;
+  transition: background-color 0.3s ease;
+}
+
+/* Dropdown Button */
+nav ul li.dropdown .dropbtn {
+  background-color: #2c3e50; /* Default button color */
+  color: white;
+  padding: 15px 20px;
+  font-size: 1.2em;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+}
+
+nav ul li.dropdown:hover .dropbtn {
+  background-color: #4a5f74; /* Hover color */
+}
+
+/* Dropdown content with Gray Background */
+nav ul li.dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #95a5a6; /* Gray background */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+/* Show dropdown on hover */
+nav ul li.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Dropdown items */
+nav ul li.dropdown .dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 17px;
+  border-bottom: 1px solid #7f8c8d; /* Line under each item */
+}
+
+/* Hover effect on dropdown items */
+nav ul li.dropdown .dropdown-content a:hover {
+  background-color: #cad2d3; /* Darker gray on hover */
 }
 
 .Add-New-Accommodation {

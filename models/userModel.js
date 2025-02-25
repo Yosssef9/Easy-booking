@@ -26,14 +26,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  favouriteCity: {
-    type: String,
-    required: true,
-  },
-  priceRange: {
-    type: Number,
-    required: true,
-  },
+  // favouriteCity: {
+  //   type: String,
+  //   required: true,
+  // },
+  // priceRange: {
+  //   type: Number,
+  //   required: true,
+  // },
   role: {
     type: String,
     enum: ["user", "admin"], // Role can either be 'user' or 'admin'
