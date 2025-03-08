@@ -22,11 +22,11 @@ const roomSchema = new mongoose.Schema({
     type: [String], // Example: ["TV", "Air Conditioning"]
     default: [],
   },
-  images: {
-    type: [String], // Array of image URLs
-    default: [],
-  },
-  thumbnail: { type: String, required: true },
+  // images: {
+  //   type: [String], // Array of image URLs
+  //   default: [],
+  // },
+  // thumbnail: { type: String, required: true },
 
   available: {
     type: Boolean,

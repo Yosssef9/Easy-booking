@@ -2,9 +2,11 @@ const Reservation = require("../models/reservations"); // Adjust the path as nee
 
 exports.updateExpiredReservations = async () => {
   try {
+    console.log("Reservation model:", Reservation);
+
     const today = new Date();
     const result = await Reservation.updateMany(
-      { endDate: { $lt: today }, isTheReservationOver: false },
+      { reservationEndDate: { $lt: today }, isTheReservationOver: false },
       { $set: { isTheReservationOver: true } }
     );
     console.log(

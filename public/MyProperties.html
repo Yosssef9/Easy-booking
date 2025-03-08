@@ -1,51 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Properties</title>
-    <link rel="stylesheet" href="./css/MyProperties.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="./css/MyProperties.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
     <header>
-        <div class="container">
-            <div class="header-container">
-                <h1><span style="color: #4040c3">Easy</span> Booking</h1>
-                <nav>
-                    <ul>
-                        <li><a href="/home">Home</a></li>
-                        <li><a href="#">Browse Listings</a></li>
-                        <li><a href="/Add-Accommodations">Add Accommodations</a></li>
-                        <li class="dropdown">
-                            <a href="javascript:void(0)">My Account</a>
-                            <div class="dropdown-content">
-                                <a href="#">My Properties</a>
-                                <a href="/MyReservations.html">My Reservations</a>
-                                <a id="logout" style="color: red" href="">Logout</a>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+      <div class="container">
+        <div class="header-container">
+          <h1><span style="color: #4040c3">Easy</span> Booking</h1>
+          <nav>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="#">Browse Listings</a></li>
+              <li><a href="/Add-Accommodations">Add Accommodations</a></li>
+              <li class="dropdown">
+                <a href="javascript:void(0)">My Account</a>
+                <div class="dropdown-content">
+                  <a href="#">My Properties</a>
+                  <a href="/MyReservations.html">My Reservations</a>
+                  <a id="logout" style="color: red" href="">Logout</a>
+                </div>
+              </li>
+            </ul>
+          </nav>
         </div>
+      </div>
     </header>
 
     <section id="properties" class="properties">
-        <div class="container">
-            <h2>Your Properties</h2>
-            <div id="properties-container">
-                <!-- Properties will be loaded dynamically -->
-            </div>
+      <div class="container">
+        <h2 class="header-style">My Properties</h2>
+        <div id="properties-container">
+          <!-- Properties will be loaded dynamically -->
         </div>
+      </div>
     </section>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2024 Easy Booking. All rights reserved.</p>
-        </div>
+      <div class="container">
+        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+      </div>
     </footer>
 
     <script src="./js/MyProperties.js"></script>
-</body>
+  </body>
 </html>

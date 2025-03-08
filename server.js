@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const protect = require("./middlewares/protect");
 const authRoutes = require("./routes/authRoutes");
 const houseRoutes = require("./routes/houseRoutes");
+const hotelRoutes = require("./routes/hotelRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 // const reportRoutes = require("./routes/reportRoutes");
 const cron = require("node-cron");
@@ -62,6 +63,7 @@ app.post("/test", (req, res) => {
 // Authentication Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/house", houseRoutes);
+app.use("/api/hotel", hotelRoutes);
 app.use("/api/property", propertyRoutes);
 // app.use("/api/report", reportRoutes);
 

@@ -32,7 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
       propertyData = data;
 
       let propertyDetails = document.getElementById("property_details");
-      propertyDetails.innerHTML = `
+      if (data.propertyType.toLowerCase() == "house") {
+        propertyDetails.innerHTML = `
         <h2 id="name">${data.propertyType}: ${data.name}</h2>
         <div class="hotel-card-content">
           <img src="${data.thumbnail}" alt="" />
@@ -46,11 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
               <li id="price">Price: $${data.pricePerNight} per night</li>
               <li id="Amenities">Amenities: ${data.amenities}</li>
               <li id="rating">Rating: ${data.rating}/5</li>
-              ${
-                data.propertyType.toLowerCase() === "house"
-                  ? `<li id="available">Available: ${data.available}</li>`
-                  : `<li id="rooms-available">Rooms Available: 5</li>`
-              }
             </ul>
             <button id="bookBtn">Book Now</button>
           </div>
@@ -60,14 +56,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
          <h3>Location</h3>
          <p>
-           <span id="house-number">House Number: ${
-             data.location.houseNumber
-           }</span>,
+           <span id="house-number">House Number: ${data.location.houseNumber}</span>,
            <span id="street">Street: ${data.location.street}</span>,
            <span id="zone">Zone: ${data.location.zone}</span>,
            <span id="city">City: ${data.location.city}</span>
          </p> 
       `;
+      } else if (data.propertyType.toLowerCase() == "hotel") {
+        propertyDetails.innerHTML = `
+        <h2 id="name">${data.propertyType}: ${data.name}</h2>
+        <div class="hotel-card-content">
+          <img src="${data.thumbnail}" alt="" />
+          <div class="hotel-info">
+            <h3>Luxury Oceanview Suite</h3>
+            <p>
+              Located by the beach, this luxurious suite offers stunning
+              ocean views and world-class amenities.
+            </p>
+            <ul>
+              <li id="price">Room Price Start From: $${data.minRoomPrice} per night</li>
+              <li id="Amenities">Amenities: ${data.amenities}</li>
+              <li id="rating">Rating: ${data.rating}/5</li>
+            </ul>
+            <button id="bookBtn">Book Now</button>
+          </div>
+        </div>
+         <h3 id="property_description">${data.propertyType} Description</h3>
+         <p id="description">${data.description}.</p>
+
+         <h3>Location</h3>
+         <p>
+           <span id="street">Street: ${data.location.street}</span>,
+           <span id="zone">Zone: ${data.location.zone}</span>,
+           <span id="city">City: ${data.location.city}</span>
+         </p> 
+      `;
+      }
 
       // Add event listener to the Book Now button
       const bookBtn = document.getElementById("bookBtn");
@@ -268,24 +292,21 @@ async function makeReservation(reservationData) {
   }
 }
 
-
-
-
 document.getElementById("logout").addEventListener("click", function (e) {
-  e.preventDefault();  // Prevent default link behavior
+  e.preventDefault(); // Prevent default link behavior
 
   fetch("http://localhost:5000/api/auth/logout", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include",  // Ensure cookies are included
+    credentials: "include", // Ensure cookies are included
   })
-  .then(response => response.json())
-  .then(data => {
-    if (data.message === "Logout successful") {
-      window.location.href = "/login";  // Redirect after logout
-    }
-  })
-  .catch(error => console.error("Error logging out:", error));
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.message === "Logout successful") {
+        window.location.href = "/login"; // Redirect after logout
+      }
+    })
+    .catch((error) => console.error("Error logging out:", error));
 });

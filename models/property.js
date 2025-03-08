@@ -60,7 +60,47 @@ const House = Property.discriminator("House", houseSchema);
 
 // Hotel Schema
 const hotelSchema = new mongoose.Schema({
-  rooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
+  rooms: [
+    {
+      type: {
+        type: String, // Example: "Single", "Double", "Suite"
+        required: true,
+      },
+      pricePerNight: {
+        type: Number,
+        required: true,
+      },
+      maxGuests: {
+        type: Number,
+        required: true,
+      },
+      amenities: {
+        type: [String], // Example: ["TV", "Air Conditioning"]
+        default: [],
+      },
+      available: {
+        type: Boolean,
+        default: true,
+      },
+      reservations: [
+        {
+          reservationStartDate: { type: Date, required: true, index: true }, // Index for fast queries
+          reservationEndDate: { type: Date, required: true },
+          numberOfReservationDays: { type: Number, required: true },
+          isTheReservationOver: {
+            type: Boolean,
+            required: true,
+            default: false,
+          },
+          tenant: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+          },
+        },
+      ], // ✅ Removed the extra comma here
+    },
+  ],
 });
 
 const Hotel = Property.discriminator("Hotel", hotelSchema);

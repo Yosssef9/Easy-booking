@@ -30,7 +30,7 @@
       </div>
     </header>
 
-    <section class="add-accommodation">
+    <section style="flex-grow: 1" class="add-accommodation">
       <div class="container">
         <h2 class="Add-New-Accommodation">Add New Accommodation</h2>
         <form
@@ -64,31 +64,21 @@
               placeholder="Hotel Name"
             />
 
-            <label for="hotel-price">Price Per Night:</label>
-            <input
-              type="number"
-              id="hotel-price"
-              name="hotel-price"
-              placeholder="Price"
-            />
-
-            <label for="hotel-max-guests">Max Guests:</label>
-            <input
-              type="number"
-              id="hotel-max-guests"
-              name="hotel-max-guests"
-              placeholder="Max Guests"
-            />
-
             <!-- Hotel Location Details -->
             <label for="hotel-location">Location</label>
             <div class="location-details">
               <label for="hotel-city">City:</label>
+              <select class="city" id="hotel-city" name="hotel-city">
+                <option selected disabled value="">Select a City</option>
+              </select>
+
+              <label for="hotel-Description">Description:</label>
               <input
                 type="text"
-                id="hotel-city"
-                name="hotel-city"
-                placeholder="City"
+                id="hotel-description"
+                name="hotel-description"
+                placeholder="Description"
+                required
               />
 
               <label for="hotel-zone">Zone:</label>
@@ -117,14 +107,20 @@
               <option value="parking">Parking</option>
             </select>
 
-            <!-- Hotel Image Upload -->
-            <label for="hotel-image">Upload Hotel Image:</label>
+            <!-- Hotel thumbnail Upload -->
+            <label for="hotel-thumbnail">Upload Hotel thumbnail:</label>
             <input
               type="file"
-              id="hotel-image"
-              name="hotel-image"
+              id="hotel-thumbnail"
+              name="hotel-thumbnail"
               accept="image/*"
             />
+            <label>Rooms:</label>
+            <div id="hotel-rooms-container">
+              <button id="addRoomBtn" type="button" onclick="addHotelRoom()">
+                Add Room Type
+              </button>
+            </div>
           </div>
 
           <!-- House Fields -->
@@ -162,7 +158,7 @@
             <div class="location-details">
               <label for="house-city">City:</label>
 
-              <select id="house-city" name="house-city">
+              <select class="city" id="house-city" name="house-city">
                 <option selected disabled value="">Select a City</option>
               </select>
 
