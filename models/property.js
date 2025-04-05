@@ -83,25 +83,38 @@ const hotelSchema = new mongoose.Schema({
         default: true,
       },
       reservations: [
-        {
-          reservationStartDate: { type: Date, required: true, index: true }, // Index for fast queries
-          reservationEndDate: { type: Date, required: true },
-          numberOfReservationDays: { type: Number, required: true },
-          isTheReservationOver: {
-            type: Boolean,
-            required: true,
-            default: false,
-          },
-          tenant: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-          },
-        },
-      ], // ✅ Removed the extra comma here
+        { type: mongoose.Schema.Types.ObjectId, ref: "Reservation" },
+      ],
     },
   ],
 });
+
+hotelSchema.methods.getAvailableRoom = async function (startDate, endDate, roomType) {
+  if (!roomType) {
+    throw new Error("Room type is required for hotel availability check");
+  }
+
+  // Populate rooms' reservations at the document level
+  await this.populate("rooms.reservations");
+
+  // Find rooms of the specified type
+  const matchingRooms = this.rooms.filter((room) => room.type === roomType);
+  if (matchingRooms.length === 0) {
+    return null; // No rooms of this type exist
+  }
+
+  // Check availability
+  for (let room of matchingRooms) {
+    const isAvailable = room.reservations.every(
+      (r) => r.reservationEndDate <= startDate || r.reservationStartDate >= endDate
+    );
+
+    if (isAvailable) return room; // ✅ Return the first available room
+  }
+
+  return null; // No rooms available
+};
+
 
 const Hotel = Property.discriminator("Hotel", hotelSchema);
 

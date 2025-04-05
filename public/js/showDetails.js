@@ -1,15 +1,16 @@
 let propertyData = null;
+let selectedRoomType = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   const stripe = Stripe(
     "pk_test_51QtUnvBmn7mp6OnVNPOAqqFGZt8E4uErl1tIF5oOsycfhVuLPmkYQXfzmjkDsTtRTp1tWHlvyYv1XSbXJKnZtFsM00ZGq4hLPG"
-  ); // Replace with your public key
+  );
 
   const cardElement = document.getElementById("card-element");
   const paymentForm = document.getElementById("payment-form");
-  const payBtn = document.getElementById("payBtn"); // Pay Now button inside the payment form
-  const paymentModal = document.getElementById("payment-modal"); // Modal
-  const closeBtn = document.getElementById("close-btn"); // Close button inside the modal
+  const payBtn = document.getElementById("payBtn");
+  const paymentModal = document.getElementById("payment-modal");
+  const closeBtn = document.getElementById("close-btn");
   const proceedToPay = document.getElementById("proceedToPay");
   const startDate = document.getElementById("startDate");
   const endDate = document.getElementById("endDate");
@@ -17,8 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("modal");
   const overlay = document.getElementById("overlay");
   const closeModal = document.getElementById("closeModal");
+  const roomSelectionModal = document.getElementById("room-selection-modal");
+  const roomTypeList = document.getElementById("room-type-list");
+  const proceedToDates = document.getElementById("proceedToDates");
+  const closeRoomModal = document.getElementById("closeRoomModal");
+  const roomErrorMessage = document.getElementById("room-error-message");
 
-  // Fetch property details
   const urlParams = new URLSearchParams(window.location.search);
   const propertyId = urlParams.get("id");
 
@@ -32,73 +37,122 @@ document.addEventListener("DOMContentLoaded", () => {
       propertyData = data;
 
       let propertyDetails = document.getElementById("property_details");
-      if (data.propertyType.toLowerCase() == "house") {
+      if (data.propertyType.toLowerCase() === "house") {
         propertyDetails.innerHTML = `
-        <h2 id="name">${data.propertyType}: ${data.name}</h2>
-        <div class="hotel-card-content">
-          <img src="${data.thumbnail}" alt="" />
-          <div class="hotel-info">
-            <h3>Luxury Oceanview Suite</h3>
-            <p>
-              Located by the beach, this luxurious suite offers stunning
-              ocean views and world-class amenities.
-            </p>
-            <ul>
-              <li id="price">Price: $${data.pricePerNight} per night</li>
-              <li id="Amenities">Amenities: ${data.amenities}</li>
-              <li id="rating">Rating: ${data.rating}/5</li>
-            </ul>
-            <button id="bookBtn">Book Now</button>
+          <h2 id="name">${data.propertyType}: ${data.name}</h2>
+          <div class="hotel-card-content">
+            <img src="${data.thumbnail}" alt="" />
+            <div class="hotel-info">
+              <h3>Luxury Oceanview Suite</h3>
+              <p>${data.description}</p>
+              <ul>
+                <li id="price">Price: $${data.pricePerNight} per night</li>
+                <li id="Amenities">Amenities: ${data.amenities}</li>
+                <li id="rating">Rating: ${data.rating}/5</li>
+              </ul>
+              <button id="bookBtn">Book Now</button>
+            </div>
           </div>
-        </div>
-         <h3 id="property_description">${data.propertyType} Description</h3>
-         <p id="description">${data.description}.</p>
-
-         <h3>Location</h3>
-         <p>
-           <span id="house-number">House Number: ${data.location.houseNumber}</span>,
-           <span id="street">Street: ${data.location.street}</span>,
-           <span id="zone">Zone: ${data.location.zone}</span>,
-           <span id="city">City: ${data.location.city}</span>
-         </p> 
-      `;
-      } else if (data.propertyType.toLowerCase() == "hotel") {
+          <h3 id="property_description">${data.propertyType} Description</h3>
+          <p id="description">${data.description}</p>
+          <h3>Location</h3>
+          <p>
+            <span id="house-number">House Number: ${data.location.houseNumber}</span>,
+            <span id="street">Street: ${data.location.street}</span>,
+            <span id="zone">Zone: ${data.location.zone}</span>,
+            <span id="city">City: ${data.location.city}</span>
+          </p>
+        `;
+      } else if (data.propertyType.toLowerCase() === "hotel") {
         propertyDetails.innerHTML = `
-        <h2 id="name">${data.propertyType}: ${data.name}</h2>
-        <div class="hotel-card-content">
-          <img src="${data.thumbnail}" alt="" />
-          <div class="hotel-info">
-            <h3>Luxury Oceanview Suite</h3>
-            <p>
-              Located by the beach, this luxurious suite offers stunning
-              ocean views and world-class amenities.
-            </p>
-            <ul>
-              <li id="price">Room Price Start From: $${data.minRoomPrice} per night</li>
-              <li id="Amenities">Amenities: ${data.amenities}</li>
-              <li id="rating">Rating: ${data.rating}/5</li>
-            </ul>
-            <button id="bookBtn">Book Now</button>
+          <h2 id="name">${data.propertyType}: ${data.name}</h2>
+          <div class="hotel-card-content">
+            <img src="${data.thumbnail}" alt="" />
+            <div class="hotel-info">
+              <h3>Available Room Types</h3>
+              <p>${data.description}</p>
+              <ul>
+                <li id="price">Room Prices Start From: $${data.minRoomPrice} per night</li>
+                <li id="Amenities">Amenities: ${data.amenities}</li>
+                <li id="rating">Rating: ${data.rating}/5</li>
+              </ul>
+              <button id="bookBtn">Book Now</button>
+            </div>
           </div>
+          <h3 id="property_description">${data.propertyType} Description</h3>
+          <p id="description">${data.description}</p>
+          <h3>Location</h3>
+          <p>
+            <span id="street">Street: ${data.location.street}</span>,
+            <span id="zone">Zone: ${data.location.zone}</span>,
+            <span id="city">City: ${data.location.city}</span>
+          </p>
+        `;
+        // Populate room type prices
+        let roomTypeList = document.getElementById("room-type-list");
+        roomTypeList.innerHTML = `
+       
+      ${
+        data.roomTypes.single
+          ? `
+        <div class="room-card" data-type="single">
+          <p><strong>Single Room</strong></p>
+          <p>Price: $${data.roomTypes.single.price} per night</p>
         </div>
-         <h3 id="property_description">${data.propertyType} Description</h3>
-         <p id="description">${data.description}.</p>
-
-         <h3>Location</h3>
-         <p>
-           <span id="street">Street: ${data.location.street}</span>,
-           <span id="zone">Zone: ${data.location.zone}</span>,
-           <span id="city">City: ${data.location.city}</span>
-         </p> 
-      `;
+      `
+          : ""
+      }
+      ${
+        data.roomTypes.double
+          ? `
+        <div class="room-card" data-type="double">
+          <p><strong>Double Room</strong></p>
+          <p>Price: $${data.roomTypes.double.price} per night</p>
+        </div>
+      `
+          : ""
+      }
+      ${
+        data.roomTypes.suite
+          ? `
+        <div class="room-card" data-type="suite">
+          <p><strong>Suite</strong></p>
+          <p>Price: $${data.roomTypes.suite.price} per night</p>
+        </div>
+      `
+          : ""
+      }
+     `;
+        addRoomTypeSelectionListeners();
       }
 
-      // Add event listener to the Book Now button
       const bookBtn = document.getElementById("bookBtn");
       if (bookBtn) {
         bookBtn.addEventListener("click", () => {
-          modal.classList.remove("hidden");
-          overlay.classList.remove("hidden");
+          if (data.propertyType.toLowerCase() === "hotel") {
+            roomSelectionModal.classList.remove("hidden");
+            overlay.classList.remove("hidden");
+            addRoomTypeSelectionListeners();
+            const proceedToDates = document.getElementById("proceedToDates");
+            const closeRoomModal = document.getElementById("closeRoomModal");
+            proceedToDates.addEventListener("click", () => {
+              if (!selectedRoomType) {
+                roomErrorMessage.textContent = "Please select a room type.";
+                setTimeout(() => (roomErrorMessage.textContent = ""), 3000);
+                return;
+              }
+              roomSelectionModal.classList.add("hidden");
+              modal.classList.remove("hidden");
+            });
+            closeRoomModal.addEventListener("click", () => {
+              roomSelectionModal.classList.add("hidden");
+              overlay.classList.add("hidden");
+              selectedRoomType = null;
+            });
+          } else {
+            modal.classList.remove("hidden");
+            overlay.classList.remove("hidden");
+          }
         });
       }
     } catch (error) {
@@ -107,7 +161,42 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   fetchPropertyDetails(propertyId);
 
-  // Function to create the PaymentIntent
+  // Add click listeners to room type cards
+  function addRoomTypeSelectionListeners() {
+    const roomCards = roomTypeList.querySelectorAll(".room-card");
+    roomCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        roomCards.forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+        selectedRoomType = card.getAttribute("data-type");
+        console.log(`selectedRoomType:${selectedRoomType}`);
+      });
+    });
+  }
+
+  // Proceed to date selection after selecting a room type
+  if (proceedToDates) {
+    proceedToDates.addEventListener("click", () => {
+      if (!selectedRoomType) {
+        roomErrorMessage.textContent = "Please select a room type.";
+        setTimeout(() => (roomErrorMessage.textContent = ""), 3000);
+        return;
+      }
+      roomSelectionModal.classList.add("hidden");
+      modal.classList.remove("hidden");
+    });
+  }
+
+  // Close room selection modal
+  if (closeRoomModal) {
+    closeRoomModal.addEventListener("click", () => {
+      roomSelectionModal.classList.add("hidden");
+      overlay.classList.add("hidden");
+      selectedRoomType = null;
+    });
+  }
+
+  // Payment Intent Creation
   function createPaymentIntent(amount) {
     fetch("http://localhost:5000/api/auth/create-payment-intent", {
       method: "POST",
@@ -117,158 +206,119 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((response) => response.json())
       .then((data) => {
         const clientSecret = data.clientSecret;
-
-        // Create an instance of Stripe Elements
         const elements = stripe.elements();
         const card = elements.create("card");
         card.mount(cardElement);
 
-        // Handle the payment when the "Pay Now" button is clicked
-        if (payBtn) {
-          payBtn.addEventListener("click", function () {
-            payBtn.disabled = true; // Disable to prevent multiple clicks
-
-            stripe
-              .confirmCardPayment(clientSecret, {
-                payment_method: {
-                  card: card,
-                },
-              })
-              .then((result) => {
-                if (result.error) {
-                  console.error(result.error.message);
-                  alert("Payment failed: " + result.error.message);
-                } else {
-                  let reservationData = {
-                    propertyId: propertyId,
-                    reservationStartDate: startDate.value,
-                    reservationEndDate: endDate.value,
-                  };
-                  makeReservation(reservationData);
-                  paymentModal.style.display = "none"; // Show the modal
-
-                  alert("Payment successful!");
-                }
-              })
-              .catch((error) => {
-                console.error("Error during payment:", error);
-                alert("An error occurred during the payment process.");
-              })
-              .finally(() => {
-                payBtn.disabled = false; // Re-enable after processing
-              });
-          });
-        }
-      })
-      .catch((error) => console.error("Error creating payment intent:", error));
+        payBtn.addEventListener("click", () => {
+          payBtn.disabled = true;
+          stripe
+            .confirmCardPayment(clientSecret, {
+              payment_method: { card: card },
+            })
+            .then((result) => {
+              if (result.error) {
+                alert("Payment failed: " + result.error.message);
+              } else {
+                let reservationData = {
+                  propertyId: propertyId,
+                  reservationStartDate: startDate.value,
+                  reservationEndDate: endDate.value,
+                  ...(propertyData.propertyType.toLowerCase() === "hotel" && {
+                    roomType: selectedRoomType,
+                  }),
+                };
+                makeReservation(reservationData);
+                paymentModal.style.display = "none";
+                alert("Payment successful!");
+              }
+            })
+            .finally(() => (payBtn.disabled = false));
+        });
+      });
   }
 
-  // Close modal when the close button is clicked
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      console.log("closeBtn clicked");
-      paymentModal.style.display = "none"; // Close the modal
-    });
-  }
+  // Close payment modal
+  closeBtn.addEventListener("click", () => {
+    paymentModal.style.display = "none";
+  });
 
-  // Close modal if clicked outside of the modal content
-  window.addEventListener("click", (event) => {
-    if (event.target === paymentModal) {
-      paymentModal.style.display = "none"; // Close the modal
+  // Date validation and payment
+  proceedToPay.addEventListener("click", async () => {
+    if (validateDates(startDate.value, endDate.value)) {
+      let available = await checkReservationAvailability(
+        propertyId,
+        startDate.value,
+        endDate.value,
+        propertyData.propertyType.toLowerCase() === "hotel"
+          ? selectedRoomType
+          : null
+      );
+      if (available) {
+        const price =
+          (propertyData.propertyType.toLowerCase() === "hotel"
+            ? propertyData.roomTypes[selectedRoomType].price
+            : propertyData.pricePerNight) * 100;
+        createPaymentIntent(price);
+        paymentModal.style.display = "block";
+        modal.classList.add("hidden");
+        overlay.classList.add("hidden");
+      } else {
+        errorMessage.textContent = "Selected dates are unavailable.";
+        setTimeout(() => (errorMessage.textContent = ""), 3000);
+      }
     }
   });
 
-  // Function to close the booking modal
+  closeModal.addEventListener("click", closeModalFunc);
+
   function closeModalFunc() {
     modal.classList.add("hidden");
     overlay.classList.add("hidden");
     errorMessage.textContent = "";
-    proceedToPay.disabled = true;
     startDate.value = "";
     endDate.value = "";
   }
 
-  // Function to validate dates
   function validateDates(startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    console.log(`startDate: ${startDate}`);
-    console.log(`endDate: ${endDate}`);
-    console.log(`start: ${start}`);
-    console.log(`end: ${end}`);
-    // Ensure both dates are selected
     if (!startDate || !endDate) {
       errorMessage.textContent = "Please select both start and end dates.";
-      setTimeout(() => {
-        errorMessage.textContent = "";
-      }, 3000);
+      setTimeout(() => (errorMessage.textContent = ""), 3000);
       return false;
     }
-
-    // Ensure end date is after start date
     if (end <= start) {
       errorMessage.textContent = "End date must be after the start date.";
-      setTimeout(() => {
-        errorMessage.textContent = "";
-      }, 3000);
+      setTimeout(() => (errorMessage.textContent = ""), 3000);
       return false;
     }
-
-    let today = new Date();
+    const today = new Date();
     if (start < today || end < today) {
-      errorMessage.textContent =
-        "The date you selected has already passed. Please choose a future date.";
-      setTimeout(() => {
-        errorMessage.textContent = "";
-      }, 3000);
+      errorMessage.textContent = "Please choose a future date.";
+      setTimeout(() => (errorMessage.textContent = ""), 3000);
       return false;
     }
-    return true; // Validation successful
-  }
-
-  // Add event listeners
-  if (closeModal) closeModal.addEventListener("click", closeModalFunc);
-
-  // Fix for Proceed to Pay button
-  if (proceedToPay) {
-    proceedToPay.addEventListener("click", async () => {
-      console.log("proceedToPay clicked");
-      if (validateDates(startDate.value, endDate.value)) {
-        let available = await checkReservationAvailability(
-          propertyId,
-          startDate.value,
-          endDate.value
-        );
-        if (available) {
-          const price = propertyData.pricePerNight * 100; // Convert price to cents
-          createPaymentIntent(price);
-          paymentModal.style.display = "block"; // Show the modal
-          modal.classList.add("hidden");
-          overlay.classList.add("hidden");
-        } else {
-          errorMessage.textContent =
-            "Sorry Your Chosen Date is Unavailable try to choose another date";
-          setTimeout(() => {
-            errorMessage.textContent = "";
-          }, 3000);
-        }
-      }
-    });
-  } else {
-    console.error("proceedToPay button not found!");
+    return true;
   }
 });
 
-async function checkReservationAvailability(propertyId, startDate, endDate) {
+async function checkReservationAvailability(
+  propertyId,
+  startDate,
+  endDate,
+  roomType = null
+) {
   try {
-    const response = await fetch(
-      `http://localhost:5000/api/auth/check-reservation-availability/${propertyId}?startDate=${startDate}&endDate=${endDate}`
-    );
+    const url = roomType
+      ? `http://localhost:5000/api/auth/check-reservation-availability/${propertyId}?startDate=${startDate}&endDate=${endDate}&roomType=${roomType}`
+      : `http://localhost:5000/api/auth/check-reservation-availability/${propertyId}?startDate=${startDate}&endDate=${endDate}`;
+    const response = await fetch(url);
     const data = await response.json();
-    console.log(" Data:", data);
     return data.available;
   } catch (error) {
-    console.log(" error:", error);
+    console.error("Error checking availability:", error);
+    return false;
   }
 }
 
@@ -277,35 +327,29 @@ async function makeReservation(reservationData) {
     const response = await fetch(
       `http://localhost:5000/api/auth/makeReservation`,
       {
-        method: "POST", // Use POST method
-        headers: {
-          "Content-Type": "application/json", // Ensure the body is JSON
-        },
-        body: JSON.stringify(reservationData), // Send reservation data as a JSON string
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reservationData),
       }
     );
-
     const data = await response.json();
-    console.log("Data:", data);
+    console.log("Reservation Data:", data);
   } catch (error) {
-    console.log("Error:", error);
+    console.error("Error making reservation:", error);
   }
 }
 
 document.getElementById("logout").addEventListener("click", function (e) {
-  e.preventDefault(); // Prevent default link behavior
-
+  e.preventDefault();
   fetch("http://localhost:5000/api/auth/logout", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include", // Ensure cookies are included
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.message === "Logout successful") {
-        window.location.href = "/login"; // Redirect after logout
+        window.location.href = "/login";
       }
     })
     .catch((error) => console.error("Error logging out:", error));

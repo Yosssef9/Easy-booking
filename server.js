@@ -18,6 +18,7 @@ const app = express();
 const {
   updateExpiredReservations,
 } = require("./utils/updateExpireResravtiosn");
+const morgan = require("morgan");
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
 app.use(cookieParser()); // Cookie parsing middleware
@@ -44,7 +45,7 @@ cron.schedule("0 0 * * *", async () => {
   try {
     const today = new Date();
     const result = await Reservation.updateMany(
-      { endDate: { $lt: today }, isTheReservationOver: false },
+      { reservationEndDate: { $lt: today }, isTheReservationOver: false },
       { $set: { isTheReservationOver: true } }
     );
     console.log(`Updated ${result.modifiedCount} expired reservations.`);
@@ -93,6 +94,8 @@ app.get("/My-Reservations", protect, (req, res) => {
 app.get("/My-Properties", protect, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "MyProperties.html"));
 });
+
+app.use(morgan("tiny"));
 
 // Start server
 app.listen(PORT, () => {

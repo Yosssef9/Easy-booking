@@ -42,23 +42,53 @@ exports.getProperty = async (req, res) => {
   console.log("getProperty request");
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.propertyId)) {
-      return res.status(400).json({ message: "Invalid movie ID format" });
+      return res.status(400).json({ message: "Invalid property ID format" });
     }
 
     const PropertyDOC = await Property.findById(req.params.propertyId);
-
     if (!PropertyDOC) {
       return res.status(404).json({ message: "Property not found" });
     }
-    let minRoomPrice;
+
+    let minRoomPrice = null;
+    let roomTypes = {
+      single: null,
+      double: null,
+      suite: null,
+    };
+
     if (PropertyDOC.propertyType === "Hotel") {
+      // Calculate minRoomPrice from the rooms array
       minRoomPrice = Math.min(
         ...PropertyDOC.rooms.map((room) => room.pricePerNight)
       );
       console.log("Minimum Room Price:", minRoomPrice);
+
+      // Extract room types from the rooms array of this specific property
+      const singleRoom = PropertyDOC.rooms.find(
+        (room) => room.type === "single"
+      );
+      const doubleRoom = PropertyDOC.rooms.find(
+        (room) => room.type === "double"
+      );
+      const suiteRoom = PropertyDOC.rooms.find((room) => room.type === "suite");
+
+      // Populate roomTypes with available room data
+      if (singleRoom) {
+        roomTypes.single = { price: singleRoom.pricePerNight };
+        console.log(`singleRoom: ${JSON.stringify(singleRoom)}`);
+      }
+      if (doubleRoom) {
+        roomTypes.double = { price: doubleRoom.pricePerNight };
+        console.log(`doubleRoom: ${JSON.stringify(doubleRoom)}`);
+      }
+      if (suiteRoom) {
+        roomTypes.suite = { price: suiteRoom.pricePerNight };
+        console.log(`suiteRoom: ${JSON.stringify(suiteRoom)}`);
+      }
     }
 
-    console.log("Property ID:", PropertyDOC._id); // Access the ObjectId here
+    console.log("Property ID:", PropertyDOC._id);
 
     res.json({
       name: PropertyDOC.name,
@@ -72,11 +102,13 @@ exports.getProperty = async (req, res) => {
       available: PropertyDOC.available,
       amenities: PropertyDOC.amenities,
       thumbnail: PropertyDOC.thumbnail,
+      rooms: PropertyDOC.rooms,
       minRoomPrice: minRoomPrice,
+      roomTypes: roomTypes, // Structured object with null for missing types
     });
   } catch (error) {
     console.error("Error fetching property:", error.message);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
 

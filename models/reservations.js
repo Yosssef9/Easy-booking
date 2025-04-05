@@ -8,7 +8,7 @@ const reservationSchema = new mongoose.Schema({
   },
   propertyType: {
     type: String,
-    enum: ["House", "Room"], // Ensures only valid types are used
+    enum: ["House", "Room", "Hotel"], // Ensures only valid types are used
     required: true,
   },
   reservationStartDate: { type: Date, required: true, index: true },

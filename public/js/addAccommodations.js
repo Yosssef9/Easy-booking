@@ -209,7 +209,7 @@ document
     fetchApi(`http://localhost:5000/api/house/add-house`, formData);
   });
 
-const roomTypes = ["Single Room", "Double Room", "Suite"];
+const roomTypes = ["single", "double", "suite"];
 
 function addHotelRoom() {
   const container = document.getElementById("hotel-rooms-container");

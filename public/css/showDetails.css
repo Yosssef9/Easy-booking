@@ -366,6 +366,7 @@ footer p {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   width: 300px;
   text-align: center;
+  z-index: 100;
 }
 .overlay {
   position: fixed;
@@ -382,4 +383,22 @@ footer p {
 .btn {
   padding: 10px 20px;
   cursor: pointer;
+}
+
+.room-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.room-card:hover {
+  background-color: #f0f0f0;
+}
+
+.room-card.selected {
+  border-color: #4040c3;
+  background-color: #e6e6ff;
 }

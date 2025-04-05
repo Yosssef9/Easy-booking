@@ -144,7 +144,7 @@ exports.createPaymentIntent = async (req, res) => {
 
 exports.checkReservationAvailability = async (req, res) => {
   const { propertyId } = req.params;
-  const { startDate, endDate } = req.query;
+  const { startDate, endDate, roomType } = req.query;
   const property = await Property.findById(propertyId).populate("reservations");
   console.log("property", property);
   const start = new Date(startDate);
@@ -153,16 +153,36 @@ exports.checkReservationAvailability = async (req, res) => {
     return res.status(404).json({ error: "Property not found" });
   }
 
-  // ✅ Now we can safely use house-specific methods
-  const available = await property.isReservationAvailable(start, end);
+  let available;
+  if (property.propertyType === "House") {
+    // Populate reservations for houses
+    await property.populate("reservations");
+    available = property.isReservationAvailable(start, end);
+  } else if (property.propertyType === "Hotel") {
+    if (!roomType) {
+      return res
+        .status(400)
+        .json({ error: "Room type is required for hotels" });
+    }
+    // No need to populate reservations here; they’re embedded in rooms
+    available = await property.getAvailableRoom(start, end, roomType);
+    console.log("available", available);
+  } else {
+    return res.status(400).json({ error: "Invalid property type" });
+  }
+
+  console.log(
+    `Availability for ${property.propertyType} (${
+      roomType || "N/A"
+    }): ${available}`
+  );
 
   res.json({ available });
 };
 
 exports.makeReservation = async (req, res) => {
   try {
-    // Get user and property data
-    let user = req.user; // Assuming user is authenticated via JWT middleware
+    let user = req.user;
     console.log("user", user);
     console.log("user.id", user.id);
 
@@ -175,32 +195,80 @@ exports.makeReservation = async (req, res) => {
         .json({ success: false, message: "Property not found" });
     }
 
-    // Check if the reservation dates are available
-    const { reservationStartDate, reservationEndDate } = req.body;
+    const { reservationStartDate, reservationEndDate, roomType } = req.body;
+    const start = new Date(reservationStartDate);
+    const end = new Date(reservationEndDate);
+    if (isNaN(start) || isNaN(end) || start >= end) {
+      return res.status(400).json({ success: false, message: "Invalid dates" });
+    }
 
-    // Calculate the number of days for the reservation
-    const numberOfReservationDays =
-      (new Date(reservationEndDate) - new Date(reservationStartDate)) /
-      (1000 * 3600 * 24);
+    const numberOfReservationDays = Math.ceil(
+      (end - start) / (1000 * 3600 * 24)
+    );
+    let newReservation;
 
-    // Create a new reservation object
-    const newReservation = new Reservation({
-      propertyId: property._id,
-      propertyType: property.propertyType, // Assuming you have a 'type' field in Property model
-      reservationStartDate: reservationStartDate,
-      reservationEndDate: reservationEndDate,
-      numberOfReservationDays: numberOfReservationDays,
-      tenant: user.id, // The user making the reservation
-    });
+    if (property.propertyType === "Hotel" && roomType) {
+      // Check availability for the room type
+      const availableRoom = await property.getAvailableRoom(
+        start,
+        end,
+        roomType
+      );
+      if (!availableRoom) {
+        return res.status(400).json({
+          success: false,
+          message: `No ${roomType} rooms available for these dates`,
+        });
+      }
 
-    // Save the new reservation to the database
-    await newReservation.save();
+      // Create and save reservation in the Reservation collection
+      newReservation = new Reservation({
+        propertyId: property._id,
+        propertyType: property.propertyType,
+        reservationStartDate: start,
+        reservationEndDate: end,
+        numberOfReservationDays: numberOfReservationDays,
+        tenant: user.id,
+        room: availableRoom._id,
+      });
 
-    // Add the reservation to the property
-    property.reservations.push(newReservation._id);
-    await property.save();
+      await newReservation.save();
+      console.log("newReservation:", newReservation);
+      console.log("availableRoom:", availableRoom);
+      // Save only the reservation ID in the room's reservations array
+      availableRoom.reservations.push(newReservation._id);
+      await property.save();
+    } else if (property.propertyType === "House") {
+      // Check availability for house
+      await property.populate("reservations");
+      const isAvailable = await property.isReservationAvailable(start, end);
+      if (!isAvailable) {
+        return res.status(400).json({
+          success: false,
+          message: "House is not available for these dates",
+        });
+      }
 
-    // Respond with success message
+      // Create a new reservation for house
+      newReservation = new Reservation({
+        propertyId: property._id,
+        propertyType: property.propertyType,
+        reservationStartDate: start,
+        reservationEndDate: end,
+        numberOfReservationDays: numberOfReservationDays,
+        tenant: user.id,
+      });
+
+      await newReservation.save();
+      property.reservations.push(newReservation._id);
+      await property.save();
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid property type or missing roomType for hotel",
+      });
+    }
+
     res.status(201).json({
       success: true,
       message: "Reservation successfully created",
@@ -208,20 +276,26 @@ exports.makeReservation = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating reservation:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Server error. Please try again." });
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again.",
+      error: error.message,
+    });
   }
 };
 
-
-
 exports.logout = async (req, res) => {
   try {
-    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "Strict" });
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
 
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
-    res.status(500).json({ message: "Error logging out", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error logging out", error: error.message });
   }
 };
