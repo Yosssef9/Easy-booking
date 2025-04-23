@@ -5,6 +5,7 @@ const {
   createPaymentIntent,
   checkReservationAvailability,
   makeReservation,
+  sendReport,
   logout
 } = require("../controllers/authController");
 const protect = require("../middlewares/protect");
@@ -29,5 +30,6 @@ router.get(
 );
 
 router.post("/makeReservation", protect, makeReservation);
+router.post("/sendReport", protect, sendReport);
 
 module.exports = router;

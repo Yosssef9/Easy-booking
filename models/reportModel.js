@@ -16,6 +16,7 @@ const reportSchema = new mongoose.Schema({
   },
   dateCreated: {
     type: Date,
+    index: true,
     default: Date.now, // Automatically sets the current date when the report is created
   },
 });

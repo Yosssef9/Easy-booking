@@ -14,7 +14,7 @@
           <nav>
             <ul>
               <li><a href="/home">Home</a></li>
-              <li><a href="#">Browse Listings</a></li>
+              <li><a href="/add-report">Add report</a></li>
               <li><a href="/Add-Accommodations">Add Accommodations</a></li>
               <li class="dropdown">
                 <a href="javascript:void(0)">My Account</a>
@@ -43,7 +43,6 @@
           <select
             id="property-type"
             name="property-type"
-            onchange="showAdditionalFields()"
           >
             <option value="" disabled selected>Select Type</option>
             <option value="hotel">Hotel</option>
@@ -117,7 +116,7 @@
             />
             <label>Rooms:</label>
             <div id="hotel-rooms-container">
-              <button id="addRoomBtn" type="button" onclick="addHotelRoom()">
+              <button id="addRoomBtn" type="button" >
                 Add Room Type
               </button>
             </div>
@@ -234,6 +233,6 @@
         <p>&copy; 2024 Easy Booking. All rights reserved.</p>
       </div>
     </footer>
-    <script src="./js/addAccommodations.js"></script>
+    <script type="module" src="./js/addAccommodations.js"></script>
   </body>
 </html>

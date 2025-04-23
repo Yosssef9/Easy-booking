@@ -1,30 +1,30 @@
-const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const User = require("./models/userModel"); // Adjust path as needed
-const dotenv = require("dotenv");
+const User = require("./models/userModel");
 
-dotenv.config();
+async function createAdminUser() {
+  try {
+    const existingAdmin = await User.findOne({ username: "superadmin" });
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(async () => {
-    // const hashedPassword = await bcrypt.hash("admin123", 10);
+    if (existingAdmin) {
+      console.log("✅ superadmin already exists.");
+      return;
+    }
+
 
     const admin = new User({
-      username: "admin",
+      username: "superadmin",
       email: "admin@99.com",
       password: "admin123",
       yearBirth: 2003,
       phoneNumber: "0",
-      role: "admin",
+      role: "superadmin",
     });
 
     await admin.save();
-    console.log("Admin user created successfully!");
-    mongoose.connection.close();
-  })
-  .catch((err) => console.error("DB connection failed:", err));
+    console.log("✅ superadmin created.");
+  } catch (error) {
+    console.error("❌ Error creating superadmin:", error);
+  }
+}
+
+module.exports = createAdminUser;

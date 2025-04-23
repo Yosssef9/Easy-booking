@@ -4,8 +4,9 @@ const { validationResult } = require("express-validator");
 exports.addHouse = async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log("hhhhhhhhhhhhh");
     console.log(" req.user : ", req.user);
-
+    console.log("body :", req.body);
     // Validate request data
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -73,7 +74,24 @@ exports.addHouse = async (req, res) => {
       house: newHouse,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error adding house", error });
+    console.error("Error adding house:");
+    console.error("Message:", error.message);
+    console.error("Name:", error.name);
+    console.error("Stack:", error.stack);
+
+    // For detailed inspection of the error object
+    console.dir(error, { depth: null });
+
+    // If the error has specific properties like errors collection (common in validation errors)
+    if (error.errors) {
+      console.error("Validation errors:");
+      Object.keys(error.errors).forEach((key) => {
+        console.error(`- ${key}: ${error.errors[key].message}`);
+      });
+    }
+
+    res
+      .status(500)
+      .json({ message: "Error adding house", error: error.message });
   }
 };

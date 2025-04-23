@@ -1,12 +1,14 @@
+/* General Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html,
 body {
+  height: 100%;
   font-family: Arial, sans-serif;
-  line-height: 1.6;
   background-color: #f4f4f4;
 }
 
@@ -15,7 +17,11 @@ body {
   max-width: 1200px;
   margin: 0 auto;
 }
+a {
+  text-decoration: none;
+}
 
+/* Keep header unchanged */
 header {
   background-color: #2c3e50;
   padding: 20px 0;
@@ -35,14 +41,23 @@ header h1 {
 
 nav ul {
   list-style: none;
-  float: right;
+  display: flex;
+  margin-left: 0;
 }
 
 nav ul li {
-  display: inline;
+  position: relative;
   margin-left: 20px;
-  height: 60px; /* Adjust the height as per your design */
-  line-height: 60px; /* Vertically center the text */
+}
+
+nav ul li a {
+  padding: 0 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 1.2em;
+  height: 100%;
+  line-height: 60px;
+  display: inline-block;
 }
 
 nav ul li a:hover {
@@ -50,21 +65,71 @@ nav ul li a:hover {
   transition: background-color 0.3s ease;
 }
 
-nav ul li a {
-  padding: 0 20px; /* Horizontal padding for spacing */
+/* Dropdown Button */
+nav ul li.dropdown .dropbtn {
+  background-color: #2c3e50; /* Default button color */
   color: white;
-  text-decoration: none;
+  padding: 15px 20px;
   font-size: 1.2em;
-  height: 100%; /* Fill the height of the li */
-  line-height: 60px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
   display: inline-block;
 }
 
+nav ul li.dropdown:hover .dropbtn {
+  background-color: #4a5f74; /* Hover color */
+}
+
+/* Dropdown content with Gray Background */
+nav ul li.dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #2c3e50; /* Gray background */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #9a9595;
+}
+
+/* Show dropdown on hover */
+nav ul li.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Dropdown items */
+nav ul li.dropdown .dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  border-bottom: 1px solid #7f8c8d; /* Line under each item */
+}
+
+/* Hover effect on dropdown items */
+nav ul li.dropdown .dropdown-content a:hover {
+  background-color: #cad2d3; /* Darker gray on hover */
+}
+
+/* Layout Fix: Make page fill viewport */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 100px); /* subtract estimated header height */
+}
+
+/* Main Section */
 .hero {
+  flex: 1;
   background-color: #176599;
   color: white;
-  padding: 50px 0;
   text-align: center;
+  padding: 50px 0;
 }
 
 .hero h2 {
@@ -72,188 +137,37 @@ nav ul li a {
 }
 
 .hero p {
-  margin-top: 10px;
   font-size: 1.2em;
-}
-
-.search-form {
-  margin-top: 20px;
-}
-
-.search-form input,
-.search-form select,
-.search-form button {
-  padding: 10px;
-  margin: 10px;
-  font-size: 1em;
-}
-
-.search-form input,
-.search-form select {
-  width: 200px;
-  border: 3px solid #ccc;
-}
-
-.search-form button {
-  background-color: #162f65;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.search-form button:hover {
-  background-color: #243d74;
-}
-
-.date-label {
-  font-weight: bold; /* Make "From" and "To" stand out */
-  color: #132260; /* Use a color like blue for the labels */
-  margin-right: 5px; /* Small space between label and date */
-}
-
-.results {
-  padding: 40px 0;
-  background-color: #fff;
-}
-
-.results h2 {
-  text-align: center;
-  font-size: 2em;
-  margin-bottom: 30px;
-}
-
-.available-listings {
-  font-size: 2.5em; /* Large font size */
-  font-weight: bold; /* Make it bold */
-  color: #34495e; /* Dark gray color */
-  text-transform: uppercase; /* Make the text uppercase */
-  letter-spacing: 2px; /* Add spacing between letters */
-  text-align: center; /* Center the text */
-  padding: 20px 0; /* Add padding above and below */
-  background: linear-gradient(
-    to right,
-    #3498db,
-    #9b59b6
-  ); /* Gradient background */
-  color: white; /* Make the text white to contrast with the background */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
-  transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition effects */
-}
-
-.listing-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ecf0f1;
-  margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 8px;
-  transition: 0.3s ease;
-}
-
-.listing-card:hover {
-  transform: scale(1.1);
-}
-
-.listing-card img {
-  width: 250px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.listing-info {
-  flex-grow: 1;
-  margin-left: 20px;
-}
-
-.listing-info h3 {
-  font-size: 1.5em;
-  color: #2c3e50;
-}
-
-.listing-info p {
-  font-size: 1.2em;
-  color: #7f8c8d;
-}
-
-.listing-info button {
-  background-color: #2c3e50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
   margin-top: 10px;
 }
 
-.listing-info button:hover {
-  background-color: #34495e;
-}
-
-footer {
-  background-color: #2c3e50;
-  color: white;
-  text-align: center;
-  padding: 20px 0;
-  position: relative;
-  bottom: 0;
-  width: 100%;
-}
-
-/* New Report Page Styles */
-.report-page {
-  padding: 40px 0;
-  background-color: #f4f4f4; /* Same background as the rest of the page */
-}
-
-.report-page h2 {
-  text-align: center;
-  font-size: 3em;
-  font-weight: bold;
-  color: #34495e;
-  background-color: #f39c12; /* Same color as the available listings section */
-  padding: 15px;
-  display: inline-block;
-  border-radius: 5px;
-}
-
+/* Report Form */
 .report-form {
+  background-color: #ecf0f1;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #ecf0f1;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.report-form label {
-  font-size: 1.2em;
-  margin-bottom: 10px;
-  color: #2c3e50;
 }
 
 .report-form input,
-.report-form textarea,
-.report-form select {
+.report-form textarea {
   padding: 10px;
   margin-bottom: 20px;
   font-size: 1em;
   border: 3px solid #ccc;
   border-radius: 5px;
-}
-
-.report-form input[type="text"],
-.report-form select {
   width: 100%;
 }
 
 .report-form textarea {
-  width: 100%;
-  height: 150px;
   resize: none;
+  height: 150px;
 }
 
 .report-form button {
@@ -262,8 +176,8 @@ footer {
   border: none;
   padding: 12px;
   font-size: 1.2em;
-  cursor: pointer;
   border-radius: 5px;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
@@ -271,29 +185,10 @@ footer {
   background-color: #2980b9;
 }
 
-.report-form .form-group {
-  margin-bottom: 20px;
-}
-
-/* For the report success message */
-.report-success {
-  background-color: #2ecc71;
+/* Footer */
+footer {
+  background-color: #2c3e50;
   color: white;
-  padding: 20px;
-  border-radius: 5px;
-  margin-top: 20px;
   text-align: center;
-  font-size: 1.2em;
-  display: none;
-}
-
-.report-error {
-  background-color: #e74c3c;
-  color: white;
-  padding: 20px;
-  border-radius: 5px;
-  margin-top: 20px;
-  text-align: center;
-  font-size: 1.2em;
-  display: none;
+  padding: 20px 0;
 }

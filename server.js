@@ -1,11 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const addAdmin = require("./addAdmin");
+
 const protect = require("./middlewares/protect");
 const authRoutes = require("./routes/authRoutes");
 const houseRoutes = require("./routes/houseRoutes");
 const hotelRoutes = require("./routes/hotelRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 // const reportRoutes = require("./routes/reportRoutes");
 const cron = require("node-cron");
 const mongoose = require("mongoose");
@@ -32,29 +35,12 @@ app.use(
   })
 );
 
-// Connect to the database
-connectDB();
-
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`${req.method} request to ${req.url}`);
   next();
 });
 
-cron.schedule("0 0 * * *", async () => {
-  try {
-    const today = new Date();
-    const result = await Reservation.updateMany(
-      { reservationEndDate: { $lt: today }, isTheReservationOver: false },
-      { $set: { isTheReservationOver: true } }
-    );
-    console.log(`Updated ${result.modifiedCount} expired reservations.`);
-  } catch (error) {
-    console.error("Error updating reservations:", error);
-  }
-});
-
-updateExpiredReservations();
 // Test route
 app.post("/test", (req, res) => {
   console.log(req.body);
@@ -66,6 +52,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/house", houseRoutes);
 app.use("/api/hotel", hotelRoutes);
 app.use("/api/property", propertyRoutes);
+app.use("/api/admin", adminRoutes);
 // app.use("/api/report", reportRoutes);
 
 // Serve static files
@@ -82,6 +69,9 @@ app.get("/login", (req, res) => {
 app.get("/home", protect, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+app.get("/add-report", protect, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "addReport.html"));
+});
 app.get("/admin-dashboard", protect, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
@@ -97,7 +87,34 @@ app.get("/My-Properties", protect, (req, res) => {
 
 app.use(morgan("tiny"));
 
+// app.use("/js", express.static("js"));
+
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    await addAdmin();
+    cron.schedule("0 0 * * *", async () => {
+      try {
+        const today = new Date();
+        const result = await Reservation.updateMany(
+          { reservationEndDate: { $lt: today }, isTheReservationOver: false },
+          { $set: { isTheReservationOver: true } }
+        );
+        console.log(`Updated ${result.modifiedCount} expired reservations.`);
+      } catch (error) {
+        console.error("Error updating reservations:", error);
+      }
+    });
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Startup error:", err);
+  }
+};
+
+startServer();
+
+
+

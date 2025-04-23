@@ -20,11 +20,9 @@ const userSchema = new mongoose.Schema({
   },
   yearBirth: {
     type: Number,
-    required: true,
   },
   phoneNumber: {
     type: String,
-    required: true,
   },
   // favouriteCity: {
   //   type: String,
@@ -36,7 +34,7 @@ const userSchema = new mongoose.Schema({
   // },
   role: {
     type: String,
-    enum: ["user", "admin"], // Role can either be 'user' or 'admin'
+    enum: ["user",'admin', 'superadmin' ], 
     default: "user",
   },
   dateJoined: {

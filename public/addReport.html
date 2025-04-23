@@ -20,44 +20,52 @@
           <h1><span style="color: #4040c3">Easy</span> Booking</h1>
           <nav>
             <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Browse Listings</a></li>
-              <li><a href="#">Add Accommodations</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/add-report">Add report</a></li>
+              <li><a href="/Add-Accommodations">Add Accommodations</a></li>
+              <li class="dropdown">
+                <a href="javascript:void(0)">My Account</a>
+                <div class="dropdown-content">
+                  <a href="/My-Properties">My Properties</a>
+                  <a href="/My-Reservations">My Reservations</a>
+                  <a id="logout" style="color: red" href="#">Logout</a>
+                </div>
+              </li>
             </ul>
           </nav>
         </div>
       </div>
     </header>
 
-    <section class="hero">
-      <div class="container">
-        <h2>Create Your Report</h2>
-        <p>Provide the necessary details to create your report.</p>
-        <form action="#" method="POST" class="report-form">
-          <input type="text" placeholder="Report Title" name="title" required />
-          <textarea
-            placeholder="Describe the report"
-            name="description"
-            rows="5"
-            required
-          ></textarea>
-          <label for="category">Category:</label>
-          <select name="category" required>
-            <option value="" disabled selected>Select Category</option>
-            <option value="feedback">Feedback</option>
-            <option value="issue">Issue</option>
-            <option value="suggestion">Suggestion</option>
-          </select>
-          <button type="submit">Submit Report</button>
-        </form>
-      </div>
-    </section>
+    <div class="page-wrapper">
+      <main class="hero">
+        <div class="container">
+          <h2>Create Your Report</h2>
+          <p>Provide the necessary details to create your report.</p>
+          <form action="#" method="POST" class="report-form">
+            <input
+              type="text"
+              placeholder="Report Title"
+              name="title"
+              required
+            />
+            <textarea
+              placeholder="Describe the report"
+              name="description"
+              rows="5"
+              required
+            ></textarea>
+            <button type="submit">Submit Report</button>
+          </form>
+        </div>
+      </main>
 
-    <footer>
-      <div class="container">
-        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
-      </div>
-    </footer>
+      <footer>
+        <div class="container">
+          <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+    <script src="./js/addReport.js"></script>
   </body>
 </html>

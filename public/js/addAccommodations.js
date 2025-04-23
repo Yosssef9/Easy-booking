@@ -1,4 +1,4 @@
-// Array of cities in Egypt
+
 const egyptCities = [
   "Cairo",
   "Alexandria",
@@ -30,8 +30,9 @@ const egyptCities = [
 ];
 
 // Function to populate the dropdown with Egyptian cities
-function populateCities() {
-  const citySelect = document.querySelector(".city");
+function populateCities(ele) {
+  const citySelect = document.querySelector(`#${ele}`);
+  if (!citySelect) return; // Safety check
 
   egyptCities.forEach((city) => {
     const option = document.createElement("option");
@@ -42,7 +43,12 @@ function populateCities() {
 }
 
 // Call the function to populate the cities when the page loads
-window.onload = populateCities;
+window.addEventListener("load", () => {
+  populateCities("house-city");
+  populateCities("hotel-city");
+  // Initialize the form state
+  showAdditionalFields();
+});
 
 // Function to show additional fields based on property type (hotel or house)
 function showAdditionalFields() {
@@ -53,17 +59,60 @@ function showAdditionalFields() {
   if (propertyType === "hotel") {
     hotelFields.style.display = "block";
     houseFields.style.display = "none";
-    document.getElementById("house-thumbnail").disabled = true;
+
+    // Enable hotel inputs
+    Array.from(hotelFields.querySelectorAll("input, select, textarea")).forEach(
+      (input) => {
+        input.disabled = false;
+      }
+    );
+
+    // Disable house inputs
+    Array.from(houseFields.querySelectorAll("input, select, textarea")).forEach(
+      (input) => {
+        input.disabled = true;
+      }
+    );
   } else if (propertyType === "house") {
     houseFields.style.display = "block";
     hotelFields.style.display = "none";
+
+    // Enable house inputs
+    Array.from(houseFields.querySelectorAll("input, select, textarea")).forEach(
+      (input) => {
+        input.disabled = false;
+      }
+    );
+
+    // Disable hotel inputs
+    Array.from(hotelFields.querySelectorAll("input, select, textarea")).forEach(
+      (input) => {
+        input.disabled = true;
+      }
+    );
   } else {
     hotelFields.style.display = "none";
     houseFields.style.display = "none";
+
+    // Disable both
+    Array.from(hotelFields.querySelectorAll("input, select, textarea")).forEach(
+      (input) => {
+        input.disabled = true;
+      }
+    );
+    Array.from(houseFields.querySelectorAll("input, select, textarea")).forEach(
+      (input) => {
+        input.disabled = true;
+      }
+    );
   }
 }
 
-// Function to handle form submission
+// Add event listener for property type change
+document
+  .getElementById("property-type")
+  .addEventListener("change", showAdditionalFields);
+
 // Function to handle form submission
 document
   .querySelector(".accommodation-form")
@@ -79,13 +128,22 @@ document
     } else if (propertyType === "house") {
       imageField = document.getElementById("house-image");
       thumbnailField = document.getElementById("house-thumbnail"); // Thumbnail field
+    } else {
+      alert("Please select a property type.");
+      return;
     }
 
-    // Check if at least one image is selected
-    if (imageField && imageField.files.length === 0) {
+    // Check if at least one image is selected (only applies to house)
+    if (
+      propertyType === "house" &&
+      imageField &&
+      imageField.files.length === 0
+    ) {
       alert("Please upload at least one image.");
       return;
     }
+
+    // Check thumbnail for both property types
     if (thumbnailField && thumbnailField.files.length === 0) {
       alert("Please upload a thumbnail image.");
       return;
@@ -112,55 +170,70 @@ document
       formData.append("street", document.getElementById("hotel-street").value);
 
       // Send amenities as JSON string
-      formData.append(
-        "amenities",
-        JSON.stringify(
-          Array.from(
-            document.getElementById("hotel-amenities").selectedOptions
-          ).map((option) => option.value)
-        )
-      );
+      const hotelAmenities = document.getElementById("hotel-amenities");
+      if (hotelAmenities) {
+        formData.append(
+          "amenities",
+          JSON.stringify(
+            Array.from(hotelAmenities.selectedOptions).map(
+              (option) => option.value
+            )
+          )
+        );
+      }
 
-      formData.append("hotel-thumbnail", thumbnailField.files[0]);
+      // Add thumbnail
+      if (thumbnailField.files[0]) {
+        formData.append("hotel-thumbnail", thumbnailField.files[0]);
+      }
 
-      // Loop through each room and add room data
-      const roomsData = [];
-      document.querySelectorAll(".hotel-room").forEach((roomDiv) => {
-        const roomType = roomDiv.querySelector("select").value;
-        const pricePerNight = roomDiv.querySelector(
-          "input[placeholder='Price per Night']"
-        ).value;
-        const maxGuests = roomDiv.querySelector(
-          "input[placeholder='Max Guests']"
-        ).value;
-        const NumberOfRooms = roomDiv.querySelector(
-          "input[placeholder='Number Of Rooms']"
-        ).value;
-        const amenities = Array.from(
-          roomDiv.querySelector("#hotel-amenities").selectedOptions
-        ).map((option) => option.value);
-        const roomImages = roomDiv.querySelector("#roomImages").files;
-        const thumbnail = roomDiv.querySelector("#roomThumbnail").files[0];
-        console.log("roomImages:", roomImages);
-        console.log("thumbnail:", thumbnail);
-        // Add room data to formData
-        roomsData.push({
-          roomType,
-          pricePerNight,
-          maxGuests,
-          amenities,
-          roomImages,
-          thumbnail,
-          NumberOfRooms,
-        });
+      // Handle room data correctly - process each room separately
+      document.querySelectorAll(".hotel-room").forEach((roomDiv, index) => {
+        // Get room data as simple values
+        const roomData = {
+          roomType: roomDiv.querySelector("select").value,
+          pricePerNight: roomDiv.querySelector(
+            "input[placeholder='Price per Night']"
+          ).value,
+          maxGuests: roomDiv.querySelector("input[placeholder='Max Guests']")
+            .value,
+          numberOfRooms: roomDiv.querySelector(
+            "input[placeholder='Number Of Rooms']"
+          ).value,
+          amenities: Array.from(
+            roomDiv.querySelector("select[id^='hotel-amenities-room']")
+              .selectedOptions
+          ).map((option) => option.value),
+        };
+
+        // Add room data as JSON string
+        formData.append(`rooms[${index}][data]`, JSON.stringify(roomData));
+
+        // Add room images separately
+        const roomImagesInput = roomDiv.querySelector("#roomImages");
+        if (roomImagesInput && roomImagesInput.files) {
+          for (let i = 0; i < roomImagesInput.files.length; i++) {
+            formData.append(
+              `rooms[${index}][images][${i}]`,
+              roomImagesInput.files[i]
+            );
+          }
+        }
+
+        // Add room thumbnail
+        const roomThumbnailInput = roomDiv.querySelector("#roomThumbnail");
+        if (roomThumbnailInput && roomThumbnailInput.files[0]) {
+          formData.append(
+            `rooms[${index}][thumbnail]`,
+            roomThumbnailInput.files[0]
+          );
+        }
       });
 
-      formData.append("rooms", JSON.stringify(roomsData));
       // Send data using Fetch API
       fetchApi(`http://localhost:5000/api/hotel/add-hotel`, formData);
-
-      // Send all rooms as JSON string
     } else if (propertyType === "house") {
+      // Gather house data
       formData.append("name", document.getElementById("house-name").value);
       formData.append(
         "pricePerNight",
@@ -183,35 +256,46 @@ document
       );
 
       // Send amenities as JSON string
-      formData.append(
-        "amenities",
-        JSON.stringify(
-          Array.from(
-            document.getElementById("house-amenities").selectedOptions
-          ).map((option) => option.value)
-        )
-      );
-      formData.append("house-thumbnail", thumbnailField.files[0]);
+      const houseAmenities = document.getElementById("house-amenities");
+      if (houseAmenities) {
+        formData.append(
+          "amenities",
+          JSON.stringify(
+            Array.from(houseAmenities.selectedOptions).map(
+              (option) => option.value
+            )
+          )
+        );
+      }
+
+      // Add thumbnail
+      if (thumbnailField.files[0]) {
+        formData.append("house-thumbnail", thumbnailField.files[0]);
+      }
 
       // Append multiple images
-      for (let i = 0; i < imageField.files.length; i++) {
-        formData.append("house-image", imageField.files[i]);
+      if (imageField && imageField.files) {
+        for (let i = 0; i < imageField.files.length; i++) {
+          formData.append("house-image", imageField.files[i]);
+        }
       }
+
+      // Send data using Fetch API
+      fetchApi(`http://localhost:5000/api/house/add-house`, formData);
     }
 
-    // Log FormData to check if all fields are appended correctly
+    // Log FormData entries (for debugging)
     console.log("FormData Entries:");
     for (let pair of formData.entries()) {
       console.log(pair[0], pair[1]);
     }
-
-    // Send data using Fetch API
-    fetchApi(`http://localhost:5000/api/house/add-house`, formData);
   });
 
 const roomTypes = ["single", "double", "suite"];
+let roomCounter = 0; // For generating unique IDs
 
 function addHotelRoom() {
+  roomCounter++;
   const container = document.getElementById("hotel-rooms-container");
 
   const roomDiv = document.createElement("div");
@@ -245,14 +329,20 @@ function addHotelRoom() {
   guestsInput.type = "number";
   guestsInput.placeholder = "Max Guests";
   guestsInput.required = true;
+  guestsInput.min = 1;
 
+  // Amenities
   const amenitiesLabel = document.createElement("label");
   amenitiesLabel.textContent = "Amenities:";
-  amenitiesLabel.setAttribute("for", "hotel-amenities");
+
+  // Create unique ID for this room's amenities select
+  const amenitiesId = `hotel-amenities-room-${roomCounter}`;
+  amenitiesLabel.setAttribute("for", amenitiesId);
 
   const amenitiesSelect = document.createElement("select");
-  amenitiesSelect.id = "hotel-amenities";
-  amenitiesSelect.name = "hotel-amenities[]";
+  amenitiesSelect.id = amenitiesId;
+  amenitiesSelect.className = "hotel-amenities"; // Use class for selection
+  amenitiesSelect.name = `hotel-amenities-room-${roomCounter}[]`;
   amenitiesSelect.multiple = true; // Allow multiple selections
 
   const amenitiesOptions = [
@@ -279,7 +369,7 @@ function addHotelRoom() {
   ];
   amenitiesOptions.forEach((amenity) => {
     const option = document.createElement("option");
-    option.value = amenity.toLowerCase(); // Use lowercase values (e.g., wifi, gym)
+    option.value = amenity.toLowerCase(); // Use lowercase values
     option.textContent = amenity;
     amenitiesSelect.appendChild(option);
   });
@@ -289,29 +379,31 @@ function addHotelRoom() {
   imagesLabel.textContent = "Images:";
   const imagesInput = document.createElement("input");
   imagesInput.id = "roomImages";
-
+  imagesInput.name = "room-image";
   imagesInput.type = "file";
   imagesInput.placeholder = "Images";
   imagesInput.required = true;
   imagesInput.accept = "image/*";
+  imagesInput.multiple = true; // Allow multiple files
 
   // Thumbnail
   const thumbnailLabel = document.createElement("label");
   thumbnailLabel.textContent = "Thumbnail:";
-
   const thumbnailInput = document.createElement("input");
   thumbnailInput.type = "file";
   thumbnailInput.id = "roomThumbnail";
-
+  thumbnailInput.name = "room-thumbnail";
   thumbnailInput.placeholder = "Thumbnail";
   thumbnailInput.required = true;
   thumbnailInput.accept = "image/*";
-  // numeber of rooms
-  const numeberOfRoomsInput = document.createElement("input");
-  numeberOfRoomsInput.type = "number";
-  numeberOfRoomsInput.placeholder = "Number Of Rooms";
-  numeberOfRoomsInput.required = true;
-  numeberOfRoomsInput.min = 1;
+
+  // Number of rooms
+  const numberOfRoomsInput = document.createElement("input");
+  numberOfRoomsInput.type = "number";
+  numberOfRoomsInput.placeholder = "Number Of Rooms";
+  numberOfRoomsInput.required = true;
+  numberOfRoomsInput.min = 1;
+  numberOfRoomsInput.value = 1; // Default value
 
   // Remove Button
   const removeButton = document.createElement("button");
@@ -322,8 +414,11 @@ function addHotelRoom() {
     container.removeChild(roomDiv);
     validateRoomSelection();
   };
+
+  // Get add room button reference
   let addRoomBtn = document.getElementById("addRoomBtn");
-  // Append Inputs
+
+  // Append all elements to the room div
   roomDiv.appendChild(roomTypeSelect);
   roomDiv.appendChild(priceInput);
   roomDiv.appendChild(guestsInput);
@@ -333,60 +428,91 @@ function addHotelRoom() {
   roomDiv.appendChild(imagesInput);
   roomDiv.appendChild(thumbnailLabel);
   roomDiv.appendChild(thumbnailInput);
-  roomDiv.appendChild(numeberOfRoomsInput);
+  roomDiv.appendChild(numberOfRoomsInput);
   roomDiv.appendChild(removeButton);
+
+  // Add the room before the "Add Room" button
   container.insertBefore(roomDiv, addRoomBtn);
 
   validateRoomSelection();
 }
 
+// Add event listener for "Add Room" button
+document.getElementById("addRoomBtn").addEventListener("click", addHotelRoom);
+
+// Function to validate room type selections and prevent duplicates
 function validateRoomSelection() {
   const selectedTypes = [
-    ...document.querySelectorAll(".hotel-room select"),
+    ...document.querySelectorAll(".hotel-room select:first-child"),
   ].map((select) => select.value);
-  document.querySelectorAll(".hotel-room select option").forEach((option) => {
-    option.disabled = selectedTypes.includes(option.value);
-  });
+
+  document
+    .querySelectorAll(".hotel-room select:first-child option")
+    .forEach((option) => {
+      if (option.value !== "" && option.value !== "Select...") {
+        // Disable options that are already selected in other rooms
+        const count = selectedTypes.filter(
+          (type) => type === option.value
+        ).length;
+        option.disabled = count > 0 && !option.selected;
+      }
+    });
 }
 
+// Improved API fetch function with better error handling
 async function fetchApi(url, formData) {
-  console.log("formData:", formData);
+  console.log("Submitting to:", url);
+
   try {
-    const response = await fetch(`${url}`, {
+    const response = await fetch(url, {
       method: "POST",
       body: formData,
+      // Don't set Content-Type header - browser sets it automatically with boundary for FormData
     });
 
     if (response.ok) {
-      const result = await response.json();
-      console.log("Accommodation added successfully:", result);
-      alert("Accommodation added successfully!");
-      document.querySelector(".accommodation-form").reset(); // Clear the form
+      try {
+        const result = await response.json();
+        console.log("Accommodation added successfully:", result);
+        alert("Accommodation added successfully!");
+        document.querySelector(".accommodation-form").reset(); // Clear the form
+
+        // Also clear any dynamically added rooms
+        const roomsContainer = document.getElementById("hotel-rooms-container");
+        const roomDivs = roomsContainer.querySelectorAll(".hotel-room");
+        roomDivs.forEach((div) => roomsContainer.removeChild(div));
+
+        return result;
+      } catch (jsonError) {
+        console.error("Error parsing JSON response:", jsonError);
+        alert("Server returned an invalid response format. Please try again.");
+      }
     } else {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to add accommodation.");
+      // Handle HTTP error status
+      const text = await response.text(); // Get response text for debugging
+      console.error(`Server error (${response.status}):`, text);
+
+      try {
+        // Try to parse as JSON in case server returned JSON error
+        const errorData = JSON.parse(text);
+        throw new Error(
+          errorData.message || `Server error: ${response.status}`
+        );
+      } catch (jsonParseError) {
+        // If not JSON, use the text directly
+        throw new Error(
+          `Server error (${response.status}): ${text.substring(0, 200)}...`
+        );
+      }
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("There was an error adding the accommodation. Please try again.");
+    alert(`There was an error adding the accommodation: ${error.message}`);
   }
 }
 
-document.getElementById("logout").addEventListener("click", function (e) {
-  e.preventDefault(); // Prevent default link behavior
+// Import logout function
+import { setupLogout } from "./utils.js";
 
-  fetch("http://localhost:5000/api/auth/logout", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include", // Ensure cookies are included
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.message === "Logout successful") {
-        window.location.href = "/login"; // Redirect after logout
-      }
-    })
-    .catch((error) => console.error("Error logging out:", error));
-});
+// Set up logout functionality
+setupLogout();

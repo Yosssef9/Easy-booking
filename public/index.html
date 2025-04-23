@@ -21,7 +21,7 @@
           <nav>
             <ul>
               <li><a href="/home">Home</a></li>
-              <li><a href="#">Browse Listings</a></li>
+              <li><a href="/add-report">Add report</a></li>
               <li><a href="/Add-Accommodations">Add Accommodations</a></li>
               <li class="dropdown">
                 <a href="javascript:void(0)">My Account</a>
@@ -41,8 +41,12 @@
       <div class="container">
         <h2>Find Your Perfect Stay</h2>
         <p>Book hotels or houses easily and quickly</p>
+        <div id="alert-container"></div>
         <form action="#" method="POST" class="search-form">
-          <input type="text" placeholder="Search for a city" name="city" />
+          <select name="city">
+            <option value="" disabled selected>Select a City</option>
+            <!-- Options populated dynamically -->
+          </select>
           <span class="date-label">From : </span>
           <input type="date" name="checkin" placeholder="Check-in Date" />
           <span class="date-label"> To : </span>
@@ -51,6 +55,7 @@
             <option value="" disabled selected>Select Type</option>
             <option value="hotel">Hotel</option>
             <option value="house">House</option>
+            <option value="Both">Both</option>
           </select>
           <button type="submit">Search</button>
         </form>
@@ -59,68 +64,25 @@
 
     <section id="results" class="results">
       <div class="container">
-        <h2 class="header-style">Available Listings</h2>
-        <div id="cards-container">
-          <!-- <div class="listing-card">
-            <img
-              src="./hotel-del-coronado-views-suite-K1TOS1-K1TOJ1-1600x900-1.webp"
-              alt="Hotel Image"
-            />
-            <div class="listing-info">
-              <h3>Hotel</h3>
-              <p>From $200 per night</p>
-              <button>Book Now</button>
-            </div>
+        <div class="grid-controls">
+          <h2 class="header-style">Available Listings</h2>
+          <div class="grid-toggle">
+            <button class="grid-btn active" data-grid="1">1 per row</button>
+            <button class="grid-btn" data-grid="2">2 per row</button>
+            <button class="grid-btn" data-grid="3">3 per row</button>
           </div>
-          <div class="listing-card">
-            <img src="./images.jpg" alt="House Image" />
-            <div class="listing-info">
-              <h3>House</h3>
-              <p>From $120 per night</p>
-              <button>Book Now</button>
-            </div>
-          </div>
-          <div class="listing-card">
-            <img src="./images (1).jpg" alt="Hotel Image" />
-            <div class="listing-info">
-              <h3>Hotel</h3>
-              <p>From $200 per night</p>
-              <button>Book Now</button>
-            </div>
-          </div>
-          <div class="listing-card">
-            <img src="./download (2).jpg" alt="House Image" />
-            <div class="listing-info">
-              <h3>House</h3>
-              <p>From $120 per night</p>
-              <button>Book Now</button>
-            </div>
-          </div>
-          <div class="listing-card">
-            <img src="./download (1).jpg" alt="Hotel Image" />
-            <div class="listing-info">
-              <h3>Hotel</h3>
-              <p>From $200 per night</p>
-              <button>Book Now</button>
-            </div>
-          </div>
-          <div class="listing-card">
-            <img src="./download.jpg" alt="House Image" />
-            <div class="listing-info">
-              <h3>House</h3>
-              <p>From $120 per night</p>
-              <button>Book Now</button>
-            </div>
-          </div> -->
+        </div>
+        <div id="cards-container" class="cards-grid grid-3">
+          <!-- Cards will be dynamically inserted here -->
         </div>
       </div>
     </section>
 
     <footer>
       <div class="container">
-        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+        <p>© 2024 Easy Booking. All rights reserved.</p>
       </div>
     </footer>
-    <script src="./js/index.js"></script>
+    <script type="module" src="./js/index.js"></script>
   </body>
 </html>

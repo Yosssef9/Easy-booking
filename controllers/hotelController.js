@@ -67,8 +67,8 @@ exports.addHotel = async (req, res) => {
           maxGuests: Number(room.maxGuests),
           amenities: room.amenities,
           reservations: [],
-          //   thumbnail: roomThumbnail || roomImage, // If room-thumbnail is not uploaded, use room-image
-          //   images: [roomImage || roomThumbnail], // If room-thumbnail is not uploaded, use room-image
+            thumbnail: roomThumbnail || roomImage, // If room-thumbnail is not uploaded, use room-image
+            images: [roomImage || roomThumbnail], // If room-thumbnail is not uploaded, use room-image
         });
       }
     });
@@ -86,7 +86,7 @@ exports.addHotel = async (req, res) => {
       hotel: newHotel,
     });
   } catch (error) {
-    console.error(error);
+    console.error("error : ",error);
     res.status(500).json({ message: "Error adding hotel", error });
   }
 };

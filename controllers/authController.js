@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Report = require("../models/reportModel");
 const { Property } = require("../models/property");
 const Reservation = require("../models/reservations");
 const jwt = require("jsonwebtoken");
@@ -74,6 +75,9 @@ exports.login = async (req, res) => {
     try {
       // Find user by email
       const user = await User.findOne({ email });
+      console.log("User found:", user);
+      console.log("Stored password:", user.password);
+
       if (!user) {
         console.log(`no user found :${user}`);
 
@@ -281,6 +285,36 @@ exports.makeReservation = async (req, res) => {
       message: "Server error. Please try again.",
       error: error.message,
     });
+  }
+};
+
+exports.sendReport = async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    let user = req.user;
+    // Validate input
+    if (!title || !description || !user) {
+      return res
+        .status(400)
+        .json({ message: "Please provide title, description, and user ID." });
+    }
+    console.log("user", user);
+    // Create new report
+    const newReport = new Report({
+      title,
+      description,
+      userWhoCreatedReport: user.id,
+    });
+
+    await newReport.save(); // Save to the database
+    res
+      .status(201)
+      .json({ message: "Report created successfully", report: newReport });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Failed to create report", error: error.message });
   }
 };
 

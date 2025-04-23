@@ -94,22 +94,43 @@ hotelSchema.methods.getAvailableRoom = async function (startDate, endDate, roomT
     throw new Error("Room type is required for hotel availability check");
   }
 
+  // Ensure startDate and endDate are Date objects
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (isNaN(start) || isNaN(end)) {
+    throw new Error("Invalid date format for startDate or endDate");
+  }
+
   // Populate rooms' reservations at the document level
   await this.populate("rooms.reservations");
 
-  // Find rooms of the specified type
+  // Handle "all" room types
+  if (roomType.toLowerCase() === "all") {
+    const availableRooms = this.rooms.filter((room) =>
+      room.reservations.every(
+        (r) =>
+          new Date(r.reservationEndDate) <= start ||
+          new Date(r.reservationStartDate) >= end
+      )
+    );
+    return availableRooms.length > 0 ? availableRooms : [];
+  }
+
+  // Handle specific room type
   const matchingRooms = this.rooms.filter((room) => room.type === roomType);
   if (matchingRooms.length === 0) {
     return null; // No rooms of this type exist
   }
 
-  // Check availability
+  // Check availability for specific room type
   for (let room of matchingRooms) {
     const isAvailable = room.reservations.every(
-      (r) => r.reservationEndDate <= startDate || r.reservationStartDate >= endDate
+      (r) =>
+        new Date(r.reservationEndDate) <= start ||
+        new Date(r.reservationStartDate) >= end
     );
 
-    if (isAvailable) return room; // ✅ Return the first available room
+    if (isAvailable) return room; // Return the first available room
   }
 
   return null; // No rooms available

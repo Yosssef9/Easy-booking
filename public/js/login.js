@@ -29,7 +29,7 @@ if (loginForm) {
       console.log("data : ", data);
       if (data.success) {
         loginText.textContent = "";
-        if (data.role === "admin") {
+        if (data.role === "admin" || data.role === "superadmin" ) {
           window.location.href = "/admin-dashboard";
         } else {
           window.location.href = "/home";
@@ -45,3 +45,4 @@ if (loginForm) {
     }
   });
 }
+
