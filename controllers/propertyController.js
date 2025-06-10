@@ -18,7 +18,6 @@ exports.getAllProperties = async (req, res) => {
         minRoomPrice = Math.min(
           ...PropertyDOC.rooms.map((room) => room.pricePerNight)
         );
-        console.log("Minimum Room Price for Hotel:", minRoomPrice);
       }
       // Add minRoomPrice to the property object
       return {
@@ -35,6 +34,46 @@ exports.getAllProperties = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error retrieving properties", error });
+  }
+};
+
+exports.getPropertyReservations = async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    console.log(`propertyId : ${propertyId}`);
+    console.log(
+      `request to getPropertyReservations hhhhhhhhhhhhhhhhhhhhhhhhhhhh`
+    );
+    // Validate the ID format
+    if (!mongoose.Types.ObjectId.isValid(propertyId)) {
+      return res.status(400).json({ message: "Invalid property ID" });
+    }
+
+    // Fetch reservations for this property
+    const propertyReservations = await reservations.find({
+      propertyId: new mongoose.Types.ObjectId(propertyId),
+    });
+    console.log(`propertyReservations : ${propertyReservations}`);
+    const allReservations = await reservations.find({});
+
+    const match = allReservations.find(
+      (r) => r.property.toString() === propertyId
+    );
+    console.log("Manual match found:", match);
+
+    if (propertyReservations.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No reservations found for this property" });
+    }
+
+    res.status(200).json({
+      message: "Reservations retrieved successfully",
+      data: propertyReservations,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving reservations", error });
   }
 };
 
@@ -66,12 +105,12 @@ exports.getProperty = async (req, res) => {
 
       // Extract room types from the rooms array of this specific property
       const singleRoom = PropertyDOC.rooms.find(
-        (room) => room.type === "single"
+        (room) => room.type === "Single"
       );
       const doubleRoom = PropertyDOC.rooms.find(
-        (room) => room.type === "double"
+        (room) => room.type === "Double"
       );
-      const suiteRoom = PropertyDOC.rooms.find((room) => room.type === "suite");
+      const suiteRoom = PropertyDOC.rooms.find((room) => room.type === "Suite");
 
       // Populate roomTypes with available room data
       if (singleRoom) {
@@ -89,6 +128,7 @@ exports.getProperty = async (req, res) => {
     }
 
     console.log("Property ID:", PropertyDOC._id);
+    console.log("roomTypes", roomTypes);
 
     res.json({
       name: PropertyDOC.name,

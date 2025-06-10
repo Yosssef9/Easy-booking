@@ -113,8 +113,12 @@ const startServer = async () => {
     console.error("❌ Startup error:", err);
   }
 };
+// let deleteUsersByPassword = require("./deleteUsers");
+// const addUsers = require("./addUsers");
+// const { generateProperties } = require("./addProprites");
+// const { addReservations } = require("./addReservations");
 
+// addReservations()
+
+// generateProperties();
 startServer();
-
-
-

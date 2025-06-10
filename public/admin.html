@@ -622,6 +622,7 @@
             "http://localhost:5000/api/admin/getAllReports"
           );
           const data = await response.json();
+          console.log(data);
           const reports = data.reports;
           const tableBody = document.getElementById("reports-table-body");
           tableBody.innerHTML = "";

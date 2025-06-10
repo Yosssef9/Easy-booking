@@ -7,11 +7,13 @@ const {
   getProperty,
   getAllReservations,
   getAllUserProperties,
+  getPropertyReservations,
 } = require("../controllers/propertyController");
 
 router.get("/getAllProperties", protect, getAllProperties);
-router.get("/getProperty/:propertyId", protect, getProperty);
+router.get("/getProperty/:propertyId",  protect, getProperty);
 router.get("/getAllReservations", protect, getAllReservations);
 router.get("/getAllUserProperties", protect, getAllUserProperties);
+router.get("/getProperty-Reservations/:id", protect, getPropertyReservations);
 
 module.exports = router;

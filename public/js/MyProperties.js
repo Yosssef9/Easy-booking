@@ -32,17 +32,26 @@ async function getAllProperties() {
 }
 
 async function displayAllProperties(data) {
-  let propertiesContainer = document.getElementById("properties-container");
+  const propertiesContainer = document.getElementById("properties-container");
+
   data.forEach((property) => {
-    let div = document.createElement("div");
+    // Create the <a> element
+    const link = document.createElement("a");
+    link.href = `property-reservations.html?id=${property._id}`;
+    link.classList.add("property-link"); // Optional class for styling
+
+    // Create the property card
+    const div = document.createElement("div");
     div.classList.add("property-card");
 
     div.innerHTML = `
-            <img src="${property.thumbnail}" alt="${property.name}">
-            <h3>${property.name}</h3>
-        `;
+      <img src="${property.thumbnail}" alt="${property.name}">
+      <h3>${property.name}</h3>
+    `;
 
-    propertiesContainer.appendChild(div);
+    // Append the card to the link, and the link to the container
+    link.appendChild(div);
+    propertiesContainer.appendChild(link);
   });
 }
 
@@ -51,4 +60,4 @@ getAllProperties();
 // import logout function
 import { setupLogout } from "./utils.js";
 
-setupLogout()
+setupLogout();
