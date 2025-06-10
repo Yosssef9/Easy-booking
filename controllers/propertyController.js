@@ -39,27 +39,30 @@ exports.getAllProperties = async (req, res) => {
 
 exports.getPropertyReservations = async (req, res) => {
   try {
-    const propertyId = req.params.id;
+    const propertyId = req.params.id.trim(); // ✅ remove hidden \n
+
     console.log(`propertyId : ${propertyId}`);
     console.log(
       `request to getPropertyReservations hhhhhhhhhhhhhhhhhhhhhhhhhhhh`
     );
     // Validate the ID format
-    if (!mongoose.Types.ObjectId.isValid(propertyId)) {
-      return res.status(400).json({ message: "Invalid property ID" });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(propertyId)) {
+    //   return res.status(400).json({ message: "Invalid property ID" });
+    // }
 
     // Fetch reservations for this property
-    const propertyReservations = await reservations.find({
-      propertyId: new mongoose.Types.ObjectId(propertyId),
-    });
-    console.log(`propertyReservations : ${propertyReservations}`);
-    const allReservations = await reservations.find({});
+    const propertyReservations = await reservations
+      .find({ propertyId })
+      .populate("tenant", "-password -__v")
+      .populate("propertyId", "-__v"); // ✅ Add this line
 
-    const match = allReservations.find(
-      (r) => r.property.toString() === propertyId
-    );
-    console.log("Manual match found:", match);
+    console.log(`propertyReservations : ${propertyReservations}`);
+
+    // const match = allReservations.find(
+    //   (r) => r.propertyId.toString() === propertyId
+    // );
+
+    // console.log("Manual match found:", match);
 
     if (propertyReservations.length === 0) {
       return res
@@ -72,8 +75,66 @@ exports.getPropertyReservations = async (req, res) => {
       data: propertyReservations,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error retrieving reservations:", error); // log full error
     res.status(500).json({ message: "Error retrieving reservations", error });
+  }
+};
+
+exports.searchProperties = async (req, res) => {
+  try {
+    const { city, propertyType, minPrice, maxPrice, name } = req.body;
+
+    const query = {};
+
+    if (city) {
+      query["location.city"] = city;
+    }
+
+    if (propertyType && propertyType !== "Both") {
+      query.propertyType = propertyType;
+    }
+
+    if (name) {
+      query.name = { $regex: name, $options: "i" };
+    }
+
+    let properties = await Property.find(query);
+
+    // Filter by price if needed
+    properties = properties.filter((property) => {
+      let price = 0;
+
+      if (property.propertyType === "House") {
+        price = property.pricePerNight;
+      } else if (property.propertyType === "Hotel") {
+        const prices = property.rooms.map((r) => r.pricePerNight);
+        price = prices.length ? Math.min(...prices) : 0;
+      }
+
+      return (
+        (!minPrice || price >= minPrice) && (!maxPrice || price <= maxPrice)
+      );
+    });
+
+    // Add minRoomPrice to hotels
+    properties = properties.map((propertyDoc) => {
+      let minRoomPrice = null;
+
+      if (propertyDoc.propertyType === "Hotel") {
+        const prices = propertyDoc.rooms.map((room) => room.pricePerNight);
+        minRoomPrice = prices.length ? Math.min(...prices) : null;
+      }
+
+      return {
+        ...propertyDoc.toObject(),
+        minRoomPrice,
+      };
+    });
+
+    res.json({ data: properties });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Search failed", error: err.message });
   }
 };
 

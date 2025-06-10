@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
   },
+  recommendedPlaces: {
+  type: [String],
+  default: []
+},
+
   // favouriteCity: {
   //   type: String,
   //   required: true,

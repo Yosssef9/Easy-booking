@@ -4,33 +4,33 @@ const alertContainer = document.getElementById("alert-container");
 const citySelect = searchForm.querySelector('select[name="city"]');
 
 const egyptCities = [
-  "Cairo",
   "Alexandria",
-  "Giza",
-  "Shubra El Kheima",
-  "Port Said",
-  "Suez",
-  "Mansoura",
-  "Tanta",
-  "Asyut",
-  "Ismailia",
-  "Fayoum",
-  "Zagazig",
-  "Minya",
-  "Damanhur",
-  "Luxor",
   "Aswan",
-  "Damietta",
+  "Assiut",
+  "Damanhur",
   "Beni Suef",
-  "Hurghada",
-  "Marsa Alam",
-  "Sharm El Sheikh",
-  "Sohag",
-  "Qena",
+  "Cairo",
+  "Mansoura",
+  "Damietta",
+  "Faiyum",
+  "Tanta",
+  "Giza",
+  "Ismailia",
   "Kafr El Sheikh",
-  "New Cairo",
-  "6th of October City",
-  "Borg El Arab",
+  "Luxor",
+  "Marsa Matruh",
+  "Minya",
+  "Shibin El Kom",
+  "Kharga",
+  "Arish",
+  "Port Said",
+  "Banha",
+  "Qena",
+  "Hurghada",
+  "Zagazig",
+  "Sohag",
+  "El Tor",
+  "Suez",
 ];
 
 function populateCityDropdown() {
@@ -51,72 +51,34 @@ function showAlert(message, type = "error") {
   `;
   alertContainer.appendChild(alert);
 
-  // Auto-remove after 3 seconds
   setTimeout(() => alert.remove(), 3000);
-
-  // Manual close
   alert.querySelector("button").addEventListener("click", () => alert.remove());
 }
 
-function validateDates(startDate, endDate) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize to midnight
-
-  if (!startDate || !endDate) {
-    showAlert("Please select both start and end dates.");
-    return false;
-  }
-  if (isNaN(start) || isNaN(end)) {
-    showAlert("Invalid date format.");
-    return false;
-  }
-  if (end <= start) {
-    showAlert("End date must be after the start date.");
-    return false;
-  }
-  if (start < today || end < today) {
-    showAlert("Please choose future dates.");
-    return false;
-  }
-  return true;
-}
-
-function validateForm(city, checkin, checkout, propertyType) {
-  if (!city) {
-    showAlert("Please select a city.");
-    return false;
-  }
-  if (!checkin) {
-    showAlert("Please select a check-in date.");
-    return false;
-  }
-  if (!checkout) {
-    showAlert("Please select a check-out date.");
-    return false;
-  }
-  if (!propertyType) {
-    showAlert("Please select a property type.");
-    return false;
-  }
-  return true;
-}
-
 function renderProperties(properties, userId = "") {
-  cardsContainer.innerHTML = ""; // Clear existing cards
-  if (properties.length === 0) {
-    showAlert("No properties found.", "success");
-  }
+  const noMessageBox = document.getElementById("no-properties-message");
+  cardsContainer.innerHTML = ""; // Clear previous listings
+  noMessageBox.innerHTML = ""; // Clear previous messages
+  noMessageBox.style.display = "none";
 
   const filteredProperties = properties.filter(
     (property) => property.owner !== userId
   );
 
+  if (filteredProperties.length === 0) {
+    console.log("No properties found.");
+    noMessageBox.innerHTML = `
+      <div class="no-properties">
+        <p>No properties found.</p>
+      </div>
+    `;
+    noMessageBox.style.display = "block";
+    return;
+  }
+
   filteredProperties.forEach((property) => {
     let propertyCard = document.createElement("div");
     propertyCard.classList.add("listing-card");
-    console.log("property:", property);
     propertyCard.innerHTML = `
       <img src="${property.thumbnail}" alt="${property.propertyType} Image" />
       <div class="listing-info">
@@ -146,10 +108,10 @@ async function fetchAllProperties() {
         method: "GET",
       }
     );
+    const result = await response.json();
 
+    console.log(result);
     if (response.ok) {
-      const result = await response.json();
-      console.log("property data:", result);
       renderProperties(result.data, result.user?.id || "");
     } else {
       const errorData = await response.json();
@@ -161,29 +123,19 @@ async function fetchAllProperties() {
   }
 }
 
-async function searchProperties(
-  city = "",
-  checkin = "",
-  checkout = "",
-  propertyType = ""
-) {
+async function searchProperties(city, propertyType, name, minPrice, maxPrice) {
   try {
-    const query = new URLSearchParams();
-    if (city) query.append("city", city);
-    if (checkin) query.append("checkin", checkin);
-    if (checkout) query.append("checkout", checkout);
-    if (propertyType) query.append("propertyType", propertyType);
-
     const response = await fetch(
-      `http://localhost:5000/api/property/searchProperties?${query.toString()}`,
+      "http://localhost:5000/api/property/searchProperties",
       {
-        method: "GET",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ city, propertyType, name, minPrice, maxPrice }),
       }
     );
 
     if (response.ok) {
       const result = await response.json();
-      console.log("search data:", result);
       renderProperties(result.data, result.user?.id || "");
     } else {
       const errorData = await response.json();
@@ -195,20 +147,17 @@ async function searchProperties(
   }
 }
 
-// Grid toggle functionality
 function setupGridToggle() {
   const gridButtons = document.querySelectorAll(".grid-btn");
   const cardsGrid = document.getElementById("cards-container");
   const savedGrid = localStorage.getItem("gridLayout") || "3";
 
-  // Set initial grid layout
   cardsGrid.classList.remove("grid-1", "grid-2", "grid-3");
   cardsGrid.classList.add(`grid-${savedGrid}`);
   gridButtons.forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.grid === savedGrid);
   });
 
-  // Add event listeners to grid buttons
   gridButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const gridSize = button.dataset.grid;
@@ -221,35 +170,36 @@ function setupGridToggle() {
   });
 }
 
-// Form submission
+// ✅ Form submission handler with price validation
 searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const formData = new FormData(searchForm);
-  const city = formData.get("city").trim();
-  const checkin = formData.get("checkin");
-  const checkout = formData.get("checkout");
+
+  const city = formData.get("city");
+  const name = formData.get("name").trim();
   const propertyType = formData.get("property-type");
+  const minPrice = formData.get("minPrice")
+    ? parseFloat(formData.get("minPrice"))
+    : null;
+  const maxPrice = formData.get("maxPrice")
+    ? parseFloat(formData.get("maxPrice"))
+    : null;
 
-  // Validate all fields are present
-  if (!validateForm(city, checkin, checkout, propertyType)) {
+  if (minPrice !== null && maxPrice !== null && maxPrice < minPrice) {
+    showAlert("Max price must be greater than or equal to Min price.");
     return;
   }
 
-  // Validate dates
-  if (!validateDates(checkin, checkout)) {
-    return;
-  }
-
-  await searchProperties(city, checkin, checkout, propertyType);
+  await searchProperties(city, propertyType, name, minPrice, maxPrice);
 });
 
-// Initialize
+// ✅ Init
 window.onload = () => {
   populateCityDropdown();
   fetchAllProperties();
   setupGridToggle();
 };
 
-// Import logout function
+// Logout button setup (assumes utils.js exports setupLogout)
 import { setupLogout } from "./utils.js";
 setupLogout();

@@ -145,6 +145,7 @@ exports.getAllReports = async (req, res) => {
       "userWhoCreatedReport",
       "username email"
     );
+    console.log(`reports:${reports}`);
 
     // Return the reports as a JSON response
     res.status(200).json({ message: "Reports fetched successfully", reports });

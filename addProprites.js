@@ -71,6 +71,46 @@ const egyptianHotelNames = [
   "Royal Palm",
   "Desert Rose",
   "Nile Pearl",
+  "Palm Valley",
+  "Horizon Luxor",
+  "Blue Lotus",
+  "White Nile Hotel",
+  "Temple View Inn",
+  "Aswan Haven",
+  "Mediterranean Breeze",
+  "Grand Karnak",
+  "Al-Masri Tower",
+  "Golden Falcon",
+  "El Nile Resort",
+  "The Pyramids Crown",
+  "Cleopatra’s Court",
+  "Arabesque Palace",
+  "Sunset Sharm",
+  "Thebes Royal",
+  "Atlantis Alexandria",
+  "Seaside El Gouna",
+  "Red Dunes Hotel",
+  "Papyrus Plaza",
+  "Bastet Boutique",
+  "Golden Ankh",
+  "Moonlight Desert",
+  "Al Qahira Royal",
+  "Horus Heights",
+  "Shams El Nil",
+  "Ra's Retreat",
+  "Sunbird Suites",
+  "Giza Mirage",
+  "El Luxor Garden",
+  "Desert Mirage",
+  "Sphinx Serenity",
+  "The Grand Pharaoh",
+  "Temple Tree",
+  "Ancient Sands",
+  "Blue Sphinx",
+  "Oasis Dream",
+  "Royal Nile Horizon",
+  "Palm Pyramid Inn",
+  "Pharaoh's Nest",
 ];
 
 // Arabic names
@@ -108,7 +148,75 @@ const arabicFirstNames = [
   "Shaimaa",
   "Heba",
   "Asmaa",
+  "Rania",
+  "Bassant",
+  "Layla",
+  "Hind",
+  "Menna",
+  "Ghada",
+  "Esraa",
+  "Malak",
+  "Farida",
+  "Nadeen",
+  "Riham",
+  "Habiba",
+  "Salma",
+  "Marwa",
+  "Sherif",
+  "Ola",
+  "Hadeer",
+  "Jana",
+  "Yassin",
+  "Tamer",
+  "Kareem",
+  "Ramy",
+  "Walid",
+  "Alyaa",
+  "Ibtissam",
+  "Souad",
+  "Kholoud",
+  "Shimaa",
+  "Marian",
+  "Nashwa",
+  "Hatem",
+  "Lina",
+  "Rana",
+  "Tia",
+  "Joud",
+  "Noor",
+  "Tamara",
+  "Hadeel",
+  "Maged",
+  "Amina",
+  "Basma",
+  "Sherine",
+  "Thanaa",
+  "Nehal",
+  "Abeer",
+  "Lamees",
+  "Halim",
+  "Amani",
+  "Basmah",
+  "Dalal",
+  "Rahma",
+  "Iman",
+  "Samar",
+  "Nermine",
+  "Nahla",
+  "Rowan",
+  "Zina",
+  "Rasha",
+  "May",
+  "Nada",
+  "Rawan",
+  "Nahla",
+  "Naglaa",
+  "Mirna",
+  "Habib",
+  "Mohannad",
+  "Safaa",
 ];
+
 const arabicLastNames = [
   "Mohamed",
   "Ahmed",
@@ -138,6 +246,66 @@ const arabicLastNames = [
   "El-Masry",
   "Hussein",
   "Ismail",
+  "Zaki",
+  "Amin",
+  "Tawfik",
+  "Nasr",
+  "Younis",
+  "Kassem",
+  "Awad",
+  "Hamdy",
+  "Zahran",
+  "Farag",
+  "Sabry",
+  "Shaker",
+  "Badr",
+  "Al-Shamy",
+  "Al-Tahan",
+  "El-Kholy",
+  "El-Ashry",
+  "Helmy",
+  "El-Nahas",
+  "Magdy",
+  "Shalaby",
+  "Refaat",
+  "Darwish",
+  "Ragab",
+  "Haggag",
+  "Bayoumi",
+  "El-Sombaty",
+  "Abaza",
+  "Mansour",
+  "Shenouda",
+  "Halawa",
+  "Ashraf",
+  "Halim",
+  "Labib",
+  "Lotfy",
+  "Taha",
+  "Fouad",
+  "Nafea",
+  "Saifan",
+  "Ghattas",
+  "Shokry",
+  "Sarhan",
+  "Mahdy",
+  "Mekky",
+  "Khalifa",
+  "Bishoy",
+  "Zein",
+  "Kamel",
+  "Makram",
+  "Wahba",
+  "Barsoum",
+  "Shalash",
+  "El-Gendy",
+  "Abdelaziz",
+  "El-Nabawy",
+  "Awadallah",
+  "Arafa",
+  "Roshdy",
+  "Ghandour",
+  "Naguib",
 ];
 
 // Placeholder arrays for 200 Egypt-specific hotel and house images
@@ -248,9 +416,23 @@ const generateUsers = async (count = 500) => {
   }
 };
 
+const getAmenitiesByScore = (price, rating, priceMin, priceMax) => {
+  const normalizedPrice = (price - priceMin) / (priceMax - priceMin); // Scale 0-1
+  const normalizedRating = rating / 5; // Rating already 0–5
+  const score = (normalizedPrice + normalizedRating) / 2; // Combine both
+  const maxAmenities = amenitiesList.length;
+  const count = Math.floor(score * (maxAmenities - 2)) + 2; // Minimum 2 amenities
+  return shuffleArray(amenitiesList).slice(0, count);
+};
+
 // Generate a house, name matches owner's full name
 const generateHouse = (user) => {
-  // console.log("User inside generateHouse:", user);
+  const price = parseFloat((Math.random() * (8000 - 500) + 500).toFixed(2)); // New range: 500–8000
+  const normalizedPrice = (price - 500) / (8000 - 500); // Scale to 0–1 based on new range
+  const rating = parseFloat(
+    (3.0 + normalizedPrice * 2 + Math.random() * 0.2).toFixed(1)
+  );
+
   return {
     propertyType: "House",
     name: `${user.username}`,
@@ -261,16 +443,14 @@ const generateHouse = (user) => {
       houseNumber: faker.location.buildingNumber(),
     },
     review: [],
-    rating: parseFloat((Math.random() * 5).toFixed(1)),
+    rating: Math.min(rating, 5.0),
     description: faker.lorem.paragraph(),
-    amenities: shuffleArray(amenitiesList).slice(
-      0,
-      Math.floor(Math.random() * 5) + 1
-    ),
+    amenities: getAmenitiesByScore(price, rating, 500, 8000),
+
     images: generateHouseImages(3),
     thumbnail: generateHouseImages(1)[0],
     owner: user._id,
-    pricePerNight: parseFloat((Math.random() * (2000 - 300) + 300).toFixed(2)),
+    pricePerNight: price,
     maxGuests: Math.floor(Math.random() * 8) + 1,
     reservations: [],
   };
@@ -278,7 +458,7 @@ const generateHouse = (user) => {
 
 // Generate hotel with unique name and correct room pricing
 const generateHotel = (user, usedHotelNames) => {
-  // Pick unique hotel name
+  // ✅ Pick a unique hotel name
   let hotelName = "";
   let attempts = 0;
   while (attempts < 50) {
@@ -289,7 +469,6 @@ const generateHotel = (user, usedHotelNames) => {
       usedHotelNames.add(baseName);
       break;
     } else {
-      // Append random number to keep unique
       const randomNum = Math.floor(Math.random() * 1000);
       const newName = `${baseName} ${randomNum}`;
       if (!usedHotelNames.has(newName)) {
@@ -302,20 +481,24 @@ const generateHotel = (user, usedHotelNames) => {
   }
   if (!hotelName) hotelName = `Hotel ${faker.random.alphaNumeric(5)}`;
 
-  // Single room price between 1500 and 20000
+  // ✅ Price logic for hotel rooms
   const singlePrice = parseFloat(
-    (Math.random() * (20000 - 1500) + 1500).toFixed(2)
+    (Math.random() * (10000 - 1000) + 1000).toFixed(2)
   );
 
-  // Helper to get random multiplier between 20% and 30%
-  const randomMultiplier = () => 1 + (Math.random() * (0.3 - 0.2) + 0.2);
-
-  // حساب أسعار الغرف
+  const randomMultiplier = () => 1 + (Math.random() * (0.3 - 0.2) + 0.2); // Between 1.2 and 1.3
   const doublePrice = parseFloat((singlePrice * randomMultiplier()).toFixed(2));
   const suitePrice = parseFloat((doublePrice * randomMultiplier()).toFixed(2));
 
-  const rooms = [];
+// ✅ Rating based on average price
+  const avgPrice = (singlePrice + doublePrice + suitePrice) / 3;
+  const normalizedPrice = (avgPrice - 1000) / (10000 - 1000); // Scale: 0 to 1
+  const rating = parseFloat(
+    (3.0 + normalizedPrice * 2 + Math.random() * 0.2).toFixed(1)
+  );
 
+  // ✅ Room generation
+  const rooms = [];
   roomTypes.forEach((type) => {
     let pricePerNight;
     if (type === "Single") {
@@ -333,14 +516,14 @@ const generateHotel = (user, usedHotelNames) => {
         type === "Suite"
           ? Math.floor(Math.random() * 6) + 2
           : Math.floor(Math.random() * 4) + 1,
-      amenities: shuffleArray(amenitiesList).slice(
-        0,
-        Math.floor(Math.random() * 4) + 1
-      ),
+      amenities: getAmenitiesByScore(pricePerNight, rating, 1000, 10000),
+
       available: true,
       reservations: [],
     });
   });
+
+  
 
   return {
     propertyType: "Hotel",
@@ -352,7 +535,7 @@ const generateHotel = (user, usedHotelNames) => {
       houseNumber: faker.location.buildingNumber(),
     },
     review: [],
-    rating: parseFloat((Math.random() * 5).toFixed(1)),
+    rating: Math.min(rating, 5.0),
     description: faker.lorem.paragraph(),
     amenities: shuffleArray(amenitiesList).slice(
       0,

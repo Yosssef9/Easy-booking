@@ -16,6 +16,27 @@ const propertySchema = new mongoose.Schema(
     amenities: { type: [String], default: [] },
     images: { type: [String], required: true },
     thumbnail: { type: String, required: true },
+    // reviews: {
+    //   description: {
+    //     type: String,
+    //     required: true, // Description of the review (what the user liked, disliked, etc.)
+    //   },
+    //   rating: {
+    //     type: Number,
+    //     required: true,
+    //     min: 1, // Rating cannot be lower than 1
+    //     max: 5, // Rating cannot be higher than 5
+    //   },
+    //   user: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "User", // Reference to the User who wrote the review
+    //     required: true, // Every review must be associated with a user
+    //   },
+    //   createdAt: {
+    //     type: Date,
+    //     default: Date.now, // Automatically set to the current date when the review is created
+    //   },
+    // },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -89,7 +110,11 @@ const hotelSchema = new mongoose.Schema({
   ],
 });
 
-hotelSchema.methods.getAvailableRoom = async function (startDate, endDate, roomType) {
+hotelSchema.methods.getAvailableRoom = async function (
+  startDate,
+  endDate,
+  roomType
+) {
   if (!roomType) {
     throw new Error("Room type is required for hotel availability check");
   }
@@ -135,7 +160,6 @@ hotelSchema.methods.getAvailableRoom = async function (startDate, endDate, roomT
 
   return null; // No rooms available
 };
-
 
 const Hotel = Property.discriminator("Hotel", hotelSchema);
 

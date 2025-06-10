@@ -15,20 +15,19 @@ async function getAllReservations() {
         },
       }
     );
-
+    const result = await response.json();
+    console.log(result);
     if (response.ok) {
-      const result = await response.json();
-      console.log(result);
       displayAllReservations(result.data);
     } else {
-      const errorData = await response.json();
+      // const errorData = await response.json();
       console.log("no reservations");
       document.getElementById("reservations-container").innerHTML = `
         <div class="no-reservations">
           <p>No reservations found.</p>
         </div>
       `;
-      throw new Error(errorData.message || "Failed to fetch reservations.");
+      // throw new Error(errorData.message || "Failed to fetch reservations.");
     }
   } catch (error) {
     console.error("Error:", error);
@@ -52,12 +51,13 @@ async function displayAllReservations(data) {
     reservationEndDate = reservationEndDate.toLocaleDateString();
 
     div.innerHTML = `
-        <h3>${Reservation.propertyId.name}</h3>
+        <h3>Tenant: ${Reservation.tenant.username}</h3>
         <p>Start Date: ${reservationStartDate}</p>
         <p>End Date:   ${reservationEndDate}</p>
         ${statusHTML}
       `;
-
+    let headerTitle = document.getElementById("headerTitle");
+    headerTitle.innerHTML = `Reservations for: ${Reservation.propertyId.name}`;
     reservationsContainer.appendChild(div);
   });
 }

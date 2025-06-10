@@ -42,21 +42,32 @@
         <h2>Find Your Perfect Stay</h2>
         <p>Book hotels or houses easily and quickly</p>
         <div id="alert-container"></div>
-        <form action="#" method="POST" class="search-form">
+        <form action="#" class="search-form">
           <select name="city">
-            <option value="" disabled selected>Select a City</option>
-            <!-- Options populated dynamically -->
+            <option value="">All Cities</option>
           </select>
-          <span class="date-label">From : </span>
-          <input type="date" name="checkin" placeholder="Check-in Date" />
-          <span class="date-label"> To : </span>
-          <input type="date" name="checkout" placeholder="Check-out Date" />
+
+          <input
+            type="number"
+            min="0"
+            name="minPrice"
+            placeholder="Min Price"
+          />
+          <input
+            type="number"
+            min="0"
+            name="maxPrice"
+            placeholder="Max Price"
+          />
+
           <select name="property-type">
-            <option value="" disabled selected>Select Type</option>
-            <option value="hotel">Hotel</option>
-            <option value="house">House</option>
-            <option value="Both">Both</option>
+            <option value="Both">All Types</option>
+            <option value="Hotel">Hotels Only</option>
+            <option value="House">Houses Only</option>
           </select>
+
+          <input type="text" name="name" placeholder="Search by name..." />
+
           <button type="submit">Search</button>
         </form>
       </div>
@@ -75,6 +86,7 @@
         <div id="cards-container" class="cards-grid grid-3">
           <!-- Cards will be dynamically inserted here -->
         </div>
+        <div id="no-properties-message" style="display: none"></div>
       </div>
     </section>
 
