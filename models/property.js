@@ -12,6 +12,7 @@ const propertySchema = new mongoose.Schema(
     },
     review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
     rating: { type: Number, default: 0 },
+    usersRating: { type: Number, default: 0 },
     description: { type: String, required: true },
     amenities: { type: [String], default: [] },
     images: { type: [String], required: true },
@@ -142,7 +143,9 @@ hotelSchema.methods.getAvailableRoom = async function (
   }
 
   // Handle specific room type
-  const matchingRooms = this.rooms.filter((room) => room.type === roomType);
+  const matchingRooms = this.rooms.filter(
+    (room) => room.type.toLowerCase() === roomType.toLowerCase()
+  );
   if (matchingRooms.length === 0) {
     return null; // No rooms of this type exist
   }

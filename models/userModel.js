@@ -25,29 +25,25 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   recommendedPlaces: {
-  type: [String],
-  default: []
-},
+    type: [String],
+    default: [],
+  },
+  reservedProperties: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Property" },
+  ],
+  favouriteCity: { type: String, required: true },
+  avargePrice: { type: Number, required: true },
 
-  // favouriteCity: {
-  //   type: String,
-  //   required: true,
-  // },
-  // priceRange: {
-  //   type: Number,
-  //   required: true,
-  // },
   role: {
     type: String,
-    enum: ["user",'admin', 'superadmin' ], 
+    enum: ["user", "admin", "superadmin"],
     default: "user",
   },
   dateJoined: {
     type: Date,
     default: Date.now, // Automatically sets the current date when the user joins
   },
-  houses: [{ type: mongoose.Schema.Types.ObjectId, ref: "House" }], // Array of houses listed by the user
-  hotels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hotel" }], // Array of hotels listed by the user
+
   report: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Report", // Reference to the Report model

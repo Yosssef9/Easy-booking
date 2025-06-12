@@ -57,6 +57,8 @@ if (signupForm) {
     const password = document.getElementById("password").value.trim();
     const yearBirth = document.getElementById("yearOfBirth").value.trim();
     const phoneNumber = document.getElementById("phoneNumber").value.trim();
+    const avargePrice = document.getElementById("avargePrice").value.trim();
+    const favouriteCity = document.getElementById("favouriteCity").value.trim();
     const termsAccepted = document.getElementById("terms").checked;
 
     // Check if all fields are filled and if terms are accepted
@@ -66,6 +68,8 @@ if (signupForm) {
       !password ||
       !yearBirth ||
       !phoneNumber ||
+      !favouriteCity ||
+      !avargePrice ||
       !termsAccepted
     ) {
       alert("Please fill in all fields and accept the terms.");
@@ -84,6 +88,8 @@ if (signupForm) {
           password,
           yearBirth,
           phoneNumber,
+          avargePrice,
+          favouriteCity,
         }),
       });
       const data = await response.json();

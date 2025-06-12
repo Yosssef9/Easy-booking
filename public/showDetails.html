@@ -30,6 +30,13 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="..."
+      crossorigin="anonymous"
+    />
+
     <script src="https://js.stripe.com/v3/"></script>
   </head>
   <body>
@@ -99,31 +106,35 @@
               <span id="city" class="city">City: San Diego</span>
             </p> -->
           </div>
+          <!-- Review Form -->
+          <section class="review-form-section">
+            <h3>Leave a Review</h3>
+            <div class="review-form">
+              <label for="ratingSelect">Rating:</label>
+              <select id="ratingSelect">
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3" selected>Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
 
-          <h3>Reviews</h3>
-          <div class="reviews">
-            <p>
-              "This hotel exceeded my expectations. The views were amazing, and
-              the service was top-notch!"
-            </p>
-            <p>- John Doe</p>
-            <div class="rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star-half-alt"></i>
+              <textarea
+                id="reviewComment"
+                placeholder="Write your review"
+              ></textarea>
+
+              <button id="submitReview">Submit Review</button>
+              <p id="reviewError" class="error"></p>
             </div>
-            <p>"A perfect stay for a relaxing vacation. Highly recommend!"</p>
-            <p>- Jane Smith</p>
-            <div class="rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
+          </section>
+          <!-- Reviews Grid -->
+          <section class="reviews-section">
+            <h3>Reviews</h3>
+            <div class="reviews">
+              <!-- JS injects .single-review cards here -->
             </div>
-          </div>
+          </section>
         </div>
       </section>
     </div>

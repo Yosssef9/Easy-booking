@@ -223,6 +223,46 @@ nav ul li.dropdown .dropdown-content a:hover {
   align-self: center;
 }
 
+/* ===== Recommended Section Styles ===== */
+/* — Recommended Section Wrapper — */
+.recommended-section {
+  padding: 40px 0;
+  background-color: #fff;
+}
+
+/* Turn the recommendations into a fixed 5-column grid */
+.recommended-places {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+  /* ensure no wrapping and each card fills its column */
+}
+
+/* Make sure each card fills its cell */
+.recommended-places .place-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Recommended: grid ثابت بخمسة أعمدة */
+.recommended-section {
+  padding: 40px 0;
+  background: #fff;
+}
+.recommended-places {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+.recommended-places .place-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .results {
   padding: 40px 0;
   background-color: #fff;

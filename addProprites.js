@@ -398,6 +398,11 @@ const generateUsers = async (count = 500) => {
         yearBirth: Math.floor(Math.random() * (2000 - 1950 + 1)) + 1950,
         phoneNumber: faker.phone.number(),
         role: "user",
+        favouriteCity: cities[Math.floor(Math.random() * cities.length)],
+        avargePrice: parseFloat(
+          (Math.random() * (25000 - 1000) + 1000).toFixed(2)
+        ),
+        reservedProperties: [],
       });
 
       attempts = 0;
@@ -490,7 +495,7 @@ const generateHotel = (user, usedHotelNames) => {
   const doublePrice = parseFloat((singlePrice * randomMultiplier()).toFixed(2));
   const suitePrice = parseFloat((doublePrice * randomMultiplier()).toFixed(2));
 
-// ✅ Rating based on average price
+  // ✅ Rating based on average price
   const avgPrice = (singlePrice + doublePrice + suitePrice) / 3;
   const normalizedPrice = (avgPrice - 1000) / (10000 - 1000); // Scale: 0 to 1
   const rating = parseFloat(
@@ -522,8 +527,6 @@ const generateHotel = (user, usedHotelNames) => {
       reservations: [],
     });
   });
-
-  
 
   return {
     propertyType: "Hotel",

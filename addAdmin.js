@@ -10,7 +10,6 @@ async function createAdminUser() {
       return;
     }
 
-
     const admin = new User({
       username: "superadmin",
       email: "admin@99.com",
@@ -18,6 +17,8 @@ async function createAdminUser() {
       yearBirth: 2003,
       phoneNumber: "0",
       role: "superadmin",
+      favouriteCity: "Damanhur",
+      avargePrice: 10000,
     });
 
     await admin.save();

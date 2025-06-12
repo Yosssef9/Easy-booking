@@ -17,7 +17,15 @@ app.use(cors());
 // Signup Controller
 exports.signup = async (req, res) => {
   console.log("Signup request received"); // Log the incoming request
-  const { username, email, password, yearBirth, phoneNumber } = req.body;
+  const {
+    username,
+    email,
+    password,
+    yearBirth,
+    phoneNumber,
+    favouriteCity,
+    avargePrice,
+  } = req.body;
   console.log(req.body);
 
   try {
@@ -43,9 +51,12 @@ exports.signup = async (req, res) => {
       password,
       yearBirth,
       phoneNumber,
+      favouriteCity,
+      avargePrice,
     });
 
     await newUser.save();
+    console.log(`newUser:${newUser}`);
 
     // Respond with success message
     res.status(201).json({
@@ -242,6 +253,13 @@ exports.makeReservation = async (req, res) => {
       // Save only the reservation ID in the room's reservations array
       availableRoom.reservations.push(newReservation._id);
       await property.save();
+
+      await User.findByIdAndUpdate(
+        user.id,
+        { $addToSet: { reservedProperties: property._id } },
+        { new: true }
+      );
+      console.log("User updated with new reservation property:", property._id);
     } else if (property.propertyType === "House") {
       // Check availability for house
       await property.populate("reservations");
@@ -266,6 +284,13 @@ exports.makeReservation = async (req, res) => {
       await newReservation.save();
       property.reservations.push(newReservation._id);
       await property.save();
+
+      await User.findByIdAndUpdate(
+        user.id,
+        { $addToSet: { reservedProperties: property._id } },
+        { new: true }
+      );
+      console.log("User updated (House) reservedProperties:", property._id);
     } else {
       return res.status(400).json({
         success: false,

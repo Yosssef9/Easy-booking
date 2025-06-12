@@ -1,7 +1,12 @@
-let cardsContainer = document.getElementById("cards-container");
+// index.js
+import { setupLogout } from "./utils.js";
+
+const cardsContainer = document.getElementById("cards-container");
 const searchForm = document.querySelector(".search-form");
 const alertContainer = document.getElementById("alert-container");
 const citySelect = searchForm.querySelector('select[name="city"]');
+const recommendedSection = document.querySelector(".recommended-section");
+const recommendedContainer = document.querySelector(".recommended-places");
 
 const egyptCities = [
   "Alexandria",
@@ -33,173 +38,185 @@ const egyptCities = [
   "Suez",
 ];
 
+// Populate city dropdown
 function populateCityDropdown() {
   egyptCities.forEach((city) => {
-    const option = document.createElement("option");
-    option.value = city;
-    option.textContent = city;
-    citySelect.appendChild(option);
+    const opt = document.createElement("option");
+    opt.value = city;
+    opt.textContent = city;
+    citySelect.appendChild(opt);
   });
 }
 
+// Show alert messages
 function showAlert(message, type = "error") {
   const alert = document.createElement("div");
   alert.className = `alert ${type}`;
-  alert.innerHTML = `
-    ${message}
-    <button>×</button>
-  `;
+  alert.innerHTML = `${message}<button>×</button>`;
   alertContainer.appendChild(alert);
-
   setTimeout(() => alert.remove(), 3000);
   alert.querySelector("button").addEventListener("click", () => alert.remove());
 }
 
+// Render full property listings
 function renderProperties(properties, userId = "") {
-  const noMessageBox = document.getElementById("no-properties-message");
-  cardsContainer.innerHTML = ""; // Clear previous listings
-  noMessageBox.innerHTML = ""; // Clear previous messages
-  noMessageBox.style.display = "none";
+  const noMsg = document.getElementById("no-properties-message");
+  cardsContainer.innerHTML = "";
+  noMsg.innerHTML = "";
+  noMsg.style.display = "none";
 
-  const filteredProperties = properties.filter(
-    (property) => property.owner !== userId
-  );
-
-  if (filteredProperties.length === 0) {
-    console.log("No properties found.");
-    noMessageBox.innerHTML = `
-      <div class="no-properties">
-        <p>No properties found.</p>
-      </div>
-    `;
-    noMessageBox.style.display = "block";
+  const filtered = properties.filter((p) => p.owner !== userId);
+  if (!filtered.length) {
+    noMsg.innerHTML = `<div class="no-properties"><p>No properties found.</p></div>`;
+    noMsg.style.display = "block";
     return;
   }
 
-  filteredProperties.forEach((property) => {
-    let propertyCard = document.createElement("div");
-    propertyCard.classList.add("listing-card");
-    propertyCard.innerHTML = `
-      <img src="${property.thumbnail}" alt="${property.propertyType} Image" />
+  filtered.forEach((property) => {
+    const card = document.createElement("div");
+    card.className = "listing-card";
+    card.innerHTML = `
+      <img src="${property.thumbnail}" alt="${property.propertyType} Image"/>
       <div class="listing-info">
-          <h3>${property.name} ${property.propertyType}</h3>
-          <p class="city"><i class="fas fa-map-marker-alt"></i> ${
-            property.location.city || "Unknown City"
-          }</p>
-          ${
-            property.propertyType === "House"
-              ? `<p class="price">From $${property.pricePerNight} per night</p>`
-              : `<p class="price">Room Price From: $${property.minRoomPrice} per night</p>`
-          }
-          <a href="showDetails.html?id=${property._id}">
-              <button>Book Now</button>
-          </a>
+        <h3>${property.name} ${property.propertyType}</h3>
+        <p class="city">
+          <i class="fas fa-map-marker-alt"></i>
+          ${property.location.city || "Unknown City"}
+        </p>
+        ${
+          property.propertyType === "House"
+            ? `<p class="price">From $${property.pricePerNight} per night</p>`
+            : `<p class="price">Room Price From: $${property.minRoomPrice} per night</p>`
+        }
+        <a href="showDetails.html?id=${property._id}">
+          <button>Book Now</button>
+        </a>
       </div>
     `;
-    cardsContainer.appendChild(propertyCard);
+    cardsContainer.appendChild(card);
   });
 }
 
+// Fetch all properties
 async function fetchAllProperties() {
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/property/getAllProperties",
-      {
-        method: "GET",
-      }
-    );
-    const result = await response.json();
-
-    console.log(result);
-    if (response.ok) {
+    const res = await fetch("/api/property/getAllProperties");
+    const result = await res.json();
+    if (res.ok) {
       renderProperties(result.data, result.user?.id || "");
     } else {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to get data.");
+      throw new Error(result.message || "Failed to load properties.");
     }
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (err) {
+    console.error("Error fetching properties:", err);
     showAlert("Error fetching properties. Please try again.");
   }
 }
 
-async function searchProperties(city, propertyType, name, minPrice, maxPrice) {
+// Search handler
+async function searchProperties(city, type, name, minP, maxP) {
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/property/searchProperties",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city, propertyType, name, minPrice, maxPrice }),
-      }
-    );
-
-    if (response.ok) {
-      const result = await response.json();
+    const res = await fetch("/api/property/searchProperties", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        city,
+        propertyType: type,
+        name,
+        minPrice: minP,
+        maxPrice: maxP,
+      }),
+    });
+    const result = await res.json();
+    if (res.ok) {
       renderProperties(result.data, result.user?.id || "");
     } else {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to search properties.");
+      throw new Error(result.message || "Search failed.");
     }
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (err) {
+    console.error("Error searching properties:", err);
     showAlert("Error searching properties. Please try again.");
   }
 }
 
+// Grid toggle for listings
 function setupGridToggle() {
-  const gridButtons = document.querySelectorAll(".grid-btn");
-  const cardsGrid = document.getElementById("cards-container");
-  const savedGrid = localStorage.getItem("gridLayout") || "3";
+  const btns = document.querySelectorAll(".grid-btn");
+  const grid = cardsContainer;
+  const saved = localStorage.getItem("gridLayout") || "3";
+  grid.classList.remove("grid-1", "grid-2", "grid-3");
+  grid.classList.add(`grid-${saved}`);
+  btns.forEach((b) => b.classList.toggle("active", b.dataset.grid === saved));
+  btns.forEach((b) =>
+    b.addEventListener("click", () => {
+      const g = b.dataset.grid;
+      grid.classList.remove("grid-1", "grid-2", "grid-3");
+      grid.classList.add(`grid-${g}`);
+      btns.forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      localStorage.setItem("gridLayout", g);
+    })
+  );
+}
 
-  cardsGrid.classList.remove("grid-1", "grid-2", "grid-3");
-  cardsGrid.classList.add(`grid-${savedGrid}`);
-  gridButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.grid === savedGrid);
-  });
+// Handle search form submit
+searchForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(searchForm);
+  const city = fd.get("city"),
+    name = fd.get("name").trim();
+  const type = fd.get("property-type");
+  const minP = fd.get("minPrice") ? parseFloat(fd.get("minPrice")) : null;
+  const maxP = fd.get("maxPrice") ? parseFloat(fd.get("maxPrice")) : null;
+  if (minP != null && maxP != null && maxP < minP) {
+    showAlert("Max price must be ≥ Min price");
+    return;
+  }
+  await searchProperties(city, type, name, minP, maxP);
+});
 
-  gridButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const gridSize = button.dataset.grid;
-      cardsGrid.classList.remove("grid-1", "grid-2", "grid-3");
-      cardsGrid.classList.add(`grid-${gridSize}`);
-      gridButtons.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-      localStorage.setItem("gridLayout", gridSize);
-    });
+// Render recommendation cards (uses same .listing-card styles)
+function renderRecommendations(recs) {
+  recommendedContainer.innerHTML = "";
+  if (!recs.length) {
+    recommendedSection.style.display = "none";
+    return;
+  }
+  recs.forEach((prop) => {
+    const card = document.createElement("div");
+    card.className = "place-card listing-card";
+    card.innerHTML = `
+      <img src="${prop.thumbnail}" alt="${prop.name}" />
+      <div class="listing-info place-info">
+        <h4>${prop.name}</h4>
+        <p class="city"><i class="fas fa-map-marker-alt"></i> ${prop.location.city}</p>
+        <a href="showDetails.html?id=${prop._id}"><button>View Details</button></a>
+      </div>
+    `;
+    recommendedContainer.appendChild(card);
   });
 }
 
-// ✅ Form submission handler with price validation
-searchForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const formData = new FormData(searchForm);
-
-  const city = formData.get("city");
-  const name = formData.get("name").trim();
-  const propertyType = formData.get("property-type");
-  const minPrice = formData.get("minPrice")
-    ? parseFloat(formData.get("minPrice"))
-    : null;
-  const maxPrice = formData.get("maxPrice")
-    ? parseFloat(formData.get("maxPrice"))
-    : null;
-
-  if (minPrice !== null && maxPrice !== null && maxPrice < minPrice) {
-    showAlert("Max price must be greater than or equal to Min price.");
-    return;
+// Fetch & display top-5 recommendations
+async function fetchRecommendations() {
+  try {
+    const res = await fetch("/api/property/getBasicRecommendations", {
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error("Failed to fetch recommendations");
+    const { recommendations } = await res.json();
+    renderRecommendations(recommendations.slice(0, 5));
+  } catch (err) {
+    console.error("Recommendations error:", err);
+    recommendedSection.style.display = "none";
   }
+}
 
-  await searchProperties(city, propertyType, name, minPrice, maxPrice);
-});
-
-// ✅ Init
+// Initialize
 window.onload = () => {
   populateCityDropdown();
+  fetchRecommendations();
   fetchAllProperties();
   setupGridToggle();
+  setupLogout();
 };
-
-// Logout button setup (assumes utils.js exports setupLogout)
-import { setupLogout } from "./utils.js";
-setupLogout();

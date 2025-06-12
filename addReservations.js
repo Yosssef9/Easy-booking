@@ -54,13 +54,21 @@ async function createFakeReservations() {
           reservationStartDate: start,
           reservationEndDate: end,
           numberOfReservationDays: days,
-          isTheReservationOver: true, // تعديل هنا
+          isTheReservationOver: true,
           tenant: tenant._id,
         });
 
         property.reservations.push(reservation._id);
         await property.save();
         count++;
+        await User.findByIdAndUpdate(
+          tenant._id,
+          { $addToSet: { reservedProperties: property._id } },
+          { new: true }
+        );
+        console.log(
+          `Added property ${property._id} to user ${tenant._id} reservedProperties`
+        );
       } else if (property.propertyType === "Hotel") {
         const availableRooms = await property.getAvailableRoom(
           start,
@@ -77,7 +85,7 @@ async function createFakeReservations() {
           reservationStartDate: start,
           reservationEndDate: end,
           numberOfReservationDays: days,
-          isTheReservationOver: true, // تعديل هنا
+          isTheReservationOver: true,
           tenant: tenant._id,
         });
 
@@ -90,6 +98,14 @@ async function createFakeReservations() {
 
         await property.save();
         count++;
+        await User.findByIdAndUpdate(
+          tenant._id,
+          { $addToSet: { reservedProperties: property._id } },
+          { new: true }
+        );
+        // console.log(
+        //   `Added property ${property._id} to user ${tenant._id} reservedProperties`
+        // );
       }
     }
 

@@ -1,5 +1,7 @@
 const { Property } = require("../models/property");
+const Review = require("../models/reviewModel");
 const reservations = require("../models/reservations");
+const User = require("../models/userModel");
 const mongoose = require("mongoose");
 
 exports.getAllProperties = async (req, res) => {
@@ -191,10 +193,23 @@ exports.getProperty = async (req, res) => {
     console.log("Property ID:", PropertyDOC._id);
     console.log("roomTypes", roomTypes);
 
+    const agg = await Review.aggregate([
+      {
+        $match: {
+          property: new mongoose.Types.ObjectId(req.params.propertyId),
+        },
+      },
+      { $group: { _id: null, avgRating: { $avg: "$rating" } } },
+    ]);
+    const usersRating =
+      agg.length > 0 ? Number(agg[0].avgRating.toFixed(2)) : 0;
+
+    console.log(`usersRating:${usersRating}`);
     res.json({
       name: PropertyDOC.name,
       location: PropertyDOC.location,
       rating: PropertyDOC.rating,
+      usersRating,
       description: PropertyDOC.description,
       images: PropertyDOC.images,
       propertyType: PropertyDOC.propertyType,
@@ -262,5 +277,55 @@ exports.getAllUserProperties = async (req, res) => {
   } catch (error) {
     console.error("Error fetching Properties:", error.message);
     res.status(500).json({ message: "Error fetching Properties", error });
+  }
+};
+
+exports.getBasicRecommendations = async (req, res) => {
+  console.log(">>> getBasicRecommendations called, user id:", req.user.id);
+  try {
+    // 1) Load the logged-in user
+    const user = await User.findById(req.user.id).lean();
+    console.log("Loaded user from DB:", user);
+    if (!user) {
+      console.log("→ No user found, returning 404");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 2) Check review count
+    const reviewCount = await Review.countDocuments({ user: user._id });
+    console.log("User has", reviewCount, "reviews");
+    if (reviewCount > 0) {
+      console.log("→ User has reviews, returning empty recommendations");
+      return res.json({ recommendations: [] });
+    }
+
+    // 3) Build aggregation inputs
+    const favCity = user.favouriteCity;
+    const targetPrice = user.avargePrice;
+    console.log("Favourite city:", favCity, "Target price:", targetPrice);
+
+    // Guard against missing data
+    if (!favCity) console.warn("⚠️  favouriteCity is empty");
+    if (targetPrice == null) console.warn("⚠️  avargePrice is empty");
+
+    // 4) Run aggregation
+    const recs = await Property.aggregate([
+      { $match: { "location.city": favCity } },
+      {
+        $addFields: {
+          priceDiff: { $abs: { $subtract: ["$pricePerNight", targetPrice] } },
+        },
+      },
+      { $sort: { priceDiff: 1 } },
+      { $limit: 5 },
+      { $project: { priceDiff: 0 } },
+    ]);
+    console.log("Aggregation returned", recs.length, "recommendations");
+
+    // 5) Return
+    return res.json({ recommendations: recs });
+  } catch (err) {
+    console.error("❌ Error in getBasicRecommendations:", err);
+    return res.status(500).json({ message: "Server error" });
   }
 };

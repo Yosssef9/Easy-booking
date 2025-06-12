@@ -9,6 +9,7 @@ const houseRoutes = require("./routes/houseRoutes");
 const hotelRoutes = require("./routes/hotelRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 // const reportRoutes = require("./routes/reportRoutes");
 const cron = require("node-cron");
 const mongoose = require("mongoose");
@@ -53,7 +54,7 @@ app.use("/api/house", houseRoutes);
 app.use("/api/hotel", hotelRoutes);
 app.use("/api/property", propertyRoutes);
 app.use("/api/admin", adminRoutes);
-// app.use("/api/report", reportRoutes);
+app.use("/api/review", reviewRoutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, "public")));

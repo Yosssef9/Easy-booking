@@ -1,6 +1,7 @@
 let propertyData = null;
 let selectedRoomType = null;
-
+const urlParams = new URLSearchParams(window.location.search);
+const propertyId = urlParams.get("id");
 document.addEventListener("DOMContentLoaded", () => {
   const stripe = Stripe(
     "pk_test_51QtUnvBmn7mp6OnVNPOAqqFGZt8E4uErl1tIF5oOsycfhVuLPmkYQXfzmjkDsTtRTp1tWHlvyYv1XSbXJKnZtFsM00ZGq4hLPG"
@@ -24,9 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeRoomModal = document.getElementById("closeRoomModal");
   const roomErrorMessage = document.getElementById("room-error-message");
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const propertyId = urlParams.get("id");
-
+  console.log(`propertyId:${propertyId}`);
   async function fetchPropertyDetails(propertyId) {
     try {
       const response = await fetch(
@@ -49,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <li id="price">Price: $${data.pricePerNight} per night</li>
                 <li id="Amenities">Amenities: ${data.amenities}</li>
                 <li id="rating">Rating: ${data.rating}/5</li>
+                <li id="usersRating">usersRating: ${data.usersRating}/5</li>
               </ul>
               <button id="bookBtn">Book Now</button>
             </div>
@@ -75,6 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <li id="price">Room Prices Start From: $${data.minRoomPrice} per night</li>
                 <li id="Amenities">Amenities: ${data.amenities}</li>
                 <li id="rating">Rating: ${data.rating}/5</li>
+                <li id="usersRating">usersRating: ${data.usersRating}/5</li>
+
               </ul>
               <button id="bookBtn">Book Now</button>
             </div>
@@ -339,7 +341,90 @@ async function makeReservation(reservationData) {
   }
 }
 
+const ratingLabels = {
+  1: "Poor",
+  2: "Fair",
+  3: "Good",
+  4: "Very Good",
+  5: "Excellent",
+};
+
+/// 1) Fetch and render reviews
+await fetchReviews(propertyId);
+
+async function fetchReviews(propertyId) {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/review/getReviews/${propertyId}`,
+      { credentials: "include" }
+    );
+    if (!res.ok) throw new Error("Failed to load reviews");
+    const { reviews } = await res.json();
+
+    const container = document.querySelector(".reviews");
+    container.innerHTML = "";
+
+    if (reviews.length === 0) {
+      container.innerHTML = `<p class="no-reviews">No reviews yet. Be the first!</p>`;
+      return;
+    }
+
+    reviews.forEach((r) => {
+      const card = document.createElement("div");
+      card.className = "single-review";
+      const label = ratingLabels[r.rating] || r.rating;
+      card.innerHTML = `
+        <div class="rating-pill">${label} (${r.rating}/5)</div>
+        <p class="comment">“${r.comment}”</p>
+        <p class="user">— ${r.user.username}</p>
+      `;
+      container.appendChild(card);
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// 2) Submit a new review
+document
+  .getElementById("submitReview")
+  .addEventListener("click", () => submitReview(propertyId));
+
+async function submitReview(propertyId) {
+  const select = document.getElementById("ratingSelect");
+  const rating = Number(select.value);
+  const comment = document.getElementById("reviewComment").value.trim();
+  const errorP = document.getElementById("reviewError");
+  errorP.textContent = "";
+
+  if (!rating || !comment) {
+    errorP.textContent = "Please select a rating and write a comment.";
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/review/createReview/${propertyId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ rating, comment }),
+      }
+    );
+    const body = await res.json();
+    if (!res.ok) throw new Error(body.message || "Error submitting review");
+
+    // Clear form & reload
+    document.getElementById("reviewComment").value = "";
+    document.getElementById("ratingSelect").value = "3";
+    await fetchReviews(propertyId);
+  } catch (err) {
+    document.getElementById("reviewError").textContent = err.message;
+  }
+}
+
 // import logout function
 import { setupLogout } from "./utils.js";
 
-setupLogout()
+setupLogout();
