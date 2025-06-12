@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="./css/addAccommodations.css" />
   </head>
   <body>
+    <div id="alert-container"></div>
+
     <header>
       <div class="container">
         <div class="header-container">
-          <h1><span style="color: #4040c3">Easy</span> Booking</h1>
+          <a href="" class="logo-link">
+            <img src="./images/logo.png" alt="Easy Booking logo" class="logo" />
+          </a>
           <nav>
             <ul>
               <li><a href="/home">Home</a></li>
@@ -40,10 +44,7 @@
           class="accommodation-form"
         >
           <label for="property-type">Property Type:</label>
-          <select
-            id="property-type"
-            name="property-type"
-          >
+          <select id="property-type" name="property-type">
             <option value="" disabled selected>Select Type</option>
             <option value="hotel">Hotel</option>
             <option value="house">House</option>
@@ -116,9 +117,7 @@
             />
             <label>Rooms:</label>
             <div id="hotel-rooms-container">
-              <button id="addRoomBtn" type="button" >
-                Add Room Type
-              </button>
+              <button id="addRoomBtn" type="button">Add Room Type</button>
             </div>
           </div>
 
@@ -230,7 +229,7 @@
 
     <footer>
       <div class="container">
-        <p>&copy; 2024 Easy Booking. All rights reserved.</p>
+        <p>&copy; 2025 Easy Booking. All rights reserved.</p>
       </div>
     </footer>
     <script type="module" src="./js/addAccommodations.js"></script>

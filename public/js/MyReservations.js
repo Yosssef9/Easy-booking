@@ -1,3 +1,13 @@
+const alertContainer = document.getElementById("alert-container");
+
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
 async function getAllReservations() {
   try {
     const response = await fetch(
@@ -27,7 +37,9 @@ async function getAllReservations() {
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("There was an error fetching the reservations. Please try again.");
+    // showAlert(
+    //   "There was an error fetching the reservations. Please try again."
+    // );
   }
 }
 
@@ -62,5 +74,4 @@ getAllReservations();
 // import logout function
 import { setupLogout } from "./utils.js";
 
-setupLogout()
-
+setupLogout();

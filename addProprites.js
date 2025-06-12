@@ -309,35 +309,22 @@ const arabicLastNames = [
 ];
 
 // Placeholder arrays for 200 Egypt-specific hotel and house images
-const hotelImages = [
-  "https://images.pexels.com/photos/31380559/pexels-photo-31380559.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/22643802/pexels-photo-22643802.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/15666718/pexels-photo-15666718.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/17477077/pexels-photo-17477077.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/18886767/pexels-photo-18886767.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/5561915/pexels-photo-5561915.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/1457848/pexels-photo-1457848.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/2611025/pexels-photo-2611025.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/2611024/pexels-photo-2611024.jpeg?auto=compress&cs=tinysrgb&w=1200",
-];
+// At the top of your seed file
+const fs = require("fs");
+const path = require("path");
 
-const houseImages = [
-  "https://images.pexels.com/photos/30709722/pexels-photo-30709722.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/18991514/pexels-photo-18991514.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/18991504/pexels-photo-18991504.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/18991588/pexels-photo-18991588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/18991507/pexels-photo-18991507.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/7031407/pexels-photo-7031407.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/534151/pexels-photo-534151.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/206172/pexels-photo-206172.jpeg?auto=compress&cs=tinysrgb&w=1200",
-];
+// Folder paths
+const hotelsDir = path.join(__dirname, "public/images/hotels");
+const housesDir = path.join(__dirname, "public/images/houses");
+
+// Read all filenames and turn them into web-accessible URLs
+const hotelImages = fs
+  .readdirSync(hotelsDir)
+  .map((fname) => `/images/hotels/${fname}`);
+
+const houseImages = fs
+  .readdirSync(housesDir)
+  .map((fname) => `/images/houses/${fname}`);
 
 // Shuffle helper
 const shuffleArray = (array) => {

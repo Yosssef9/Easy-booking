@@ -1,3 +1,13 @@
+const alertContainer = document.getElementById("alert-container");
+
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
 const loginForm = document.getElementById("login-form");
 const loginText = document.getElementById("login-text");
 const loginButton = document.getElementById("loginButton");
@@ -11,7 +21,7 @@ if (loginForm) {
     const password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
-      alert("Please fill in all fields.");
+      showAlert("Please fill in all fields.");
       loginText.textContent = "";
       return;
     }
@@ -29,20 +39,19 @@ if (loginForm) {
       console.log("data : ", data);
       if (data.success) {
         loginText.textContent = "";
-        if (data.role === "admin" || data.role === "superadmin" ) {
+        if (data.role === "admin" || data.role === "superadmin") {
           window.location.href = "/admin-dashboard";
         } else {
           window.location.href = "/home";
         }
       } else {
-        alert(data.message || "Login failed. Please try again.");
+        showAlert(data.message || "Login failed. Please try again.");
         loginText.textContent = "";
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(error.message);
+      showAlert(error.message);
       loginText.textContent = "";
     }
   });
 }
-

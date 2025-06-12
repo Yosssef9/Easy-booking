@@ -1,4 +1,13 @@
+const alertContainer = document.getElementById("alert-container");
 
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
 const egyptCities = [
   "Cairo",
   "Alexandria",
@@ -129,7 +138,8 @@ document
       imageField = document.getElementById("house-image");
       thumbnailField = document.getElementById("house-thumbnail"); // Thumbnail field
     } else {
-      alert("Please select a property type.");
+      // alert("Please select a property type.");
+      showAlert("Please select a property type.");
       return;
     }
 
@@ -474,7 +484,7 @@ async function fetchApi(url, formData) {
       try {
         const result = await response.json();
         console.log("Accommodation added successfully:", result);
-        alert("Accommodation added successfully!");
+        alert("Accommodation added successfully!", "success");
         document.querySelector(".accommodation-form").reset(); // Clear the form
 
         // Also clear any dynamically added rooms

@@ -1,3 +1,14 @@
+const alertContainer = document.getElementById("alert-container");
+
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const reportForm = document.querySelector(".report-form");
 
@@ -29,16 +40,16 @@ document.addEventListener("DOMContentLoaded", function () {
       if (response.ok) {
         const result = await response.json();
         console.log("result", result);
-        alert("Report created successfully!"); // Success message
+        showAlert("Report created successfully!", "success"); // Success message
         // Reset the form
         reportForm.reset();
       } else {
         const error = await response.json();
         console.log("error", error);
-        alert(error.message || "Failed to create the report."); // Error message
+        showAlert(error.message || "Failed to create the report."); // Error message
       }
     } catch (error) {
-      alert("An error occurred: " + error.message); // Catch network or other errors
+      showAlert("An error occurred: " + error.message); // Catch network or other errors
     }
   });
 });

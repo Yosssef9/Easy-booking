@@ -1,3 +1,13 @@
+const alertContainer = document.getElementById("alert-container");
+
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
 async function getAllProperties() {
   try {
     const response = await fetch(
@@ -27,7 +37,7 @@ async function getAllProperties() {
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("There was an error fetching the properties. Please try again.");
+    // showAlert("There was an error fetching the properties. Please try again.");
   }
 }
 

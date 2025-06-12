@@ -31,9 +31,21 @@ header {
 }
 
 .header-container {
+  height: 100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.logo-link {
+  display: inline-block;
+}
+
+.logo {
+  max-height: 150px; /* cap the logo height */
+  height: auto; /* let width scale automatically */
+  width: auto; /* preserve aspect ratio */
+  object-fit: contain; /* avoid distortion if the image is taller/wider */
 }
 
 header h1 {
@@ -116,6 +128,59 @@ nav ul li.dropdown .dropdown-content a {
 /* Hover effect on dropdown items */
 nav ul li.dropdown .dropdown-content a:hover {
   background-color: #cad2d3; /* Darker gray on hover */
+}
+
+/* — Alert container fixed top-right — */
+#alert-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999; /* above all other content */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px; /* space between stacked alerts */
+  pointer-events: none; /* so clicks pass through empty area */
+}
+
+/* individual alert boxes */
+.alert {
+  pointer-events: auto; /* re-enable clicks on the button */
+  background-color: #e74c3c;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 5px;
+  width: auto;
+  max-width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-in-out;
+}
+
+/* success variant */
+.alert.success {
+  background-color: #2ecc71;
+}
+
+/* dismiss button */
+.alert button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+/* slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .Add-New-Accommodation {

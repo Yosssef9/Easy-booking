@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const mongoose = require("mongoose");
 
 exports.getAllProperties = async (req, res) => {
+  console.log("getAllProperties hit ");
   try {
     let properties = await Property.find();
 
@@ -295,8 +296,14 @@ exports.getBasicRecommendations = async (req, res) => {
     const reviewCount = await Review.countDocuments({ user: user._id });
     console.log("User has", reviewCount, "reviews");
     if (reviewCount > 0) {
-      console.log("→ User has reviews, returning empty recommendations");
-      return res.json({ recommendations: [] });
+      console.log(
+        "→ User has reviews, returning personalized recommendedPlaces"
+      );
+      // fetch the full Property docs for those IDs
+      const recs = await Property.find({
+        _id: { $in: user.recommendedPlaces },
+      }).lean();
+      return res.json({ recommendations: recs });
     }
 
     // 3) Build aggregation inputs

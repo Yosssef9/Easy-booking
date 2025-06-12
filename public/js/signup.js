@@ -1,3 +1,13 @@
+const alertContainer = document.getElementById("alert-container");
+
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
 // Array of cities in Egypt
 const egyptCities = [
   "Alexandria",
@@ -72,7 +82,7 @@ if (signupForm) {
       !avargePrice ||
       !termsAccepted
     ) {
-      alert("Please fill in all fields and accept the terms.");
+      showAlert("Please fill in all fields and accept the terms.");
       return;
     }
 
@@ -96,14 +106,14 @@ if (signupForm) {
       console.log(data);
 
       if (data.success) {
-        alert("Signup successful! Redirecting to login page.");
+        showAlert("Signup successful! Redirecting to login page.","success");
         window.location.href = "/login"; // Redirect to login page after signup
       } else {
-        alert(data.message);
+        showAlert(data.message);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(error.message);
+      showAlert(error.message);
     }
   });
 }

@@ -1,3 +1,13 @@
+const alertContainer = document.getElementById("alert-container");
+
+function showAlert(message, type = "error") {
+  const alert = document.createElement("div");
+  alert.className = `alert ${type}`;
+  alert.innerHTML = `${message}<button>×</button>`;
+  alertContainer.appendChild(alert);
+  setTimeout(() => alert.remove(), 3000);
+  alert.querySelector("button").addEventListener("click", () => alert.remove());
+}
 let propertyData = null;
 let selectedRoomType = null;
 const urlParams = new URLSearchParams(window.location.search);
@@ -220,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then((result) => {
               if (result.error) {
-                alert("Payment failed: " + result.error.message);
+                showAlert("Payment failed: " + result.error.message);
               } else {
                 let reservationData = {
                   propertyId: propertyId,
@@ -232,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
                 makeReservation(reservationData);
                 paymentModal.style.display = "none";
-                alert("Payment successful!");
+                showAlert("Payment successful!","success");
               }
             })
             .finally(() => (payBtn.disabled = false));

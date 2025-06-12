@@ -11,8 +11,8 @@ const {
   searchProperties,
   getBasicRecommendations,
 } = require("../controllers/propertyController");
-
 router.get("/getAllProperties", protect, getAllProperties);
+
 router.get("/getProperty/:propertyId", protect, getProperty);
 router.get("/getAllReservations", protect, getAllReservations);
 router.get("/getAllUserProperties", protect, getAllUserProperties);

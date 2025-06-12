@@ -100,8 +100,12 @@ function renderProperties(properties, userId = "") {
 // Fetch all properties
 async function fetchAllProperties() {
   try {
-    const res = await fetch("/api/property/getAllProperties");
+    const res = await fetch(
+      "http://localhost:5000/api/property/getAllProperties"
+    );
     const result = await res.json();
+    console.log(`hhhhhhhhhhhhhhhhhhhh`);
+    console.log(`result:${result}`);
     if (res.ok) {
       renderProperties(result.data, result.user?.id || "");
     } else {
@@ -116,17 +120,20 @@ async function fetchAllProperties() {
 // Search handler
 async function searchProperties(city, type, name, minP, maxP) {
   try {
-    const res = await fetch("/api/property/searchProperties", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        city,
-        propertyType: type,
-        name,
-        minPrice: minP,
-        maxPrice: maxP,
-      }),
-    });
+    const res = await fetch(
+      "http://localhost:5000/api/property/searchProperties",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          city,
+          propertyType: type,
+          name,
+          minPrice: minP,
+          maxPrice: maxP,
+        }),
+      }
+    );
     const result = await res.json();
     if (res.ok) {
       renderProperties(result.data, result.user?.id || "");
@@ -200,9 +207,12 @@ function renderRecommendations(recs) {
 // Fetch & display top-5 recommendations
 async function fetchRecommendations() {
   try {
-    const res = await fetch("/api/property/getBasicRecommendations", {
-      credentials: "include",
-    });
+    const res = await fetch(
+      "http://localhost:5000/api/property/getBasicRecommendations",
+      {
+        credentials: "include",
+      }
+    );
     if (!res.ok) throw new Error("Failed to fetch recommendations");
     const { recommendations } = await res.json();
     renderRecommendations(recommendations.slice(0, 5));
