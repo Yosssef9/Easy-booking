@@ -1,5 +1,6 @@
 const { Property, House } = require("../models/property");
 const { validationResult } = require("express-validator");
+const runModel = require("./modelRunner");
 
 exports.addHouse = async (req, res) => {
   try {
@@ -73,6 +74,7 @@ exports.addHouse = async (req, res) => {
       message: "House added successfully!",
       house: newHouse,
     });
+    await runModel();
   } catch (error) {
     console.error("Error adding house:");
     console.error("Message:", error.message);

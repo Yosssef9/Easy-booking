@@ -101,6 +101,8 @@ exports.addAdmin = async (req, res) => {
       email,
       password,
       role: "admin",
+      avargePrice: 10000,
+      favouriteCity: "cairo",
     });
     await user.save();
 

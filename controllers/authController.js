@@ -8,6 +8,7 @@ const cors = require("cors");
 const express = require("express");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const runModel = require("./modelRunner");
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON request bodies
@@ -303,6 +304,7 @@ exports.makeReservation = async (req, res) => {
       message: "Reservation successfully created",
       reservation: newReservation,
     });
+    await runModel();
   } catch (error) {
     console.error("Error creating reservation:", error);
     res.status(500).json({

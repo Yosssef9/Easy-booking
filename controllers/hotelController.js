@@ -1,6 +1,7 @@
 const { Property, Hotel } = require("../models/property");
 const Room = require("../models/roomModel");
 const { validationResult } = require("express-validator");
+const runModel = require("./modelRunner");
 
 exports.addHotel = async (req, res) => {
   try {
@@ -67,8 +68,8 @@ exports.addHotel = async (req, res) => {
           maxGuests: Number(room.maxGuests),
           amenities: room.amenities,
           reservations: [],
-            thumbnail: roomThumbnail || roomImage, // If room-thumbnail is not uploaded, use room-image
-            images: [roomImage || roomThumbnail], // If room-thumbnail is not uploaded, use room-image
+          thumbnail: roomThumbnail || roomImage, // If room-thumbnail is not uploaded, use room-image
+          images: [roomImage || roomThumbnail], // If room-thumbnail is not uploaded, use room-image
         });
       }
     });
@@ -85,8 +86,9 @@ exports.addHotel = async (req, res) => {
       message: "Hotel added successfully!",
       hotel: newHotel,
     });
+    await runModel();
   } catch (error) {
-    console.error("error : ",error);
+    console.error("error : ", error);
     res.status(500).json({ message: "Error adding hotel", error });
   }
 };
